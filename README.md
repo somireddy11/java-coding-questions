@@ -388,8 +388,15 @@ public class FirstNonRepeatingCharacter {
 
 ---
 
+
+
+
 ### Conclusion:
 
 These coding questions cover a variety of problems related to Java collections, including lists, sets, maps, and heaps. They test your ability to manipulate collections efficiently and implement common algorithms using the appropriate data structures.
 
 Feel free to try these questions and let me know if you need help with solutions or further explanations. Happy coding!
+
+
+###7 2. How do you find the frequency of each element in an ArrayList?
+
