@@ -398,5 +398,5 @@ These coding questions cover a variety of problems related to Java collections, 
 Feel free to try these questions and let me know if you need help with solutions or further explanations. Happy coding!
 
 
-###7 2. How do you find the frequency of each element in an ArrayList?
+###7  How do you find the frequency of each element in an ArrayList?
 
