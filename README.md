@@ -400,3 +400,268 @@ Feel free to try these questions and let me know if you need help with solutions
 
 ###7  How do you find the frequency of each element in an ArrayList?
 
+
+Here are some commonly asked Java interview questions focusing on the Collections framework. These questions range from basic concepts to more advanced applications and are designed to test your understanding of different collection classes, algorithms, and performance considerations.
+
+---
+
+### 1. **How do you remove duplicates from an ArrayList in Java?**
+
+One way to remove duplicates from an `ArrayList` is to convert it into a `Set` and then back to an `ArrayList`, as `Set` does not allow duplicates.
+
+```java
+import java.util.*;
+
+public class RemoveDuplicates {
+    public static void main(String[] args) {
+        List<Integer> list = new ArrayList<>(Arrays.asList(1, 2, 2, 3, 4, 4, 5));
+        
+        // Method 1: Using a HashSet
+        List<Integer> uniqueList = new ArrayList<>(new HashSet<>(list));
+        
+        // Method 2: Using LinkedHashSet to maintain insertion order
+        List<Integer> uniqueListOrdered = new ArrayList<>(new LinkedHashSet<>(list));
+        
+        System.out.println("Without duplicates: " + uniqueList);
+        System.out.println("Without duplicates (maintained order): " + uniqueListOrdered);
+    }
+}
+```
+
+---
+
+### 2. **How do you find the frequency of each element in an ArrayList?**
+
+Use a `HashMap` to count the occurrences of each element.
+
+```java
+import java.util.*;
+
+public class FrequencyCounter {
+    public static void main(String[] args) {
+        List<String> list = Arrays.asList("apple", "banana", "apple", "orange", "banana", "apple");
+        
+        Map<String, Integer> frequencyMap = new HashMap<>();
+        
+        for (String item : list) {
+            frequencyMap.put(item, frequencyMap.getOrDefault(item, 0) + 1);
+        }
+        
+        System.out.println("Frequency of elements: " + frequencyMap);
+    }
+}
+```
+
+---
+
+### 3. **How do you find the intersection of two lists in Java?**
+
+You can use `retainAll` to find the intersection between two lists.
+
+```java
+import java.util.*;
+
+public class IntersectionOfLists {
+    public static void main(String[] args) {
+        List<Integer> list1 = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5));
+        List<Integer> list2 = new ArrayList<>(Arrays.asList(3, 4, 5, 6, 7));
+        
+        list1.retainAll(list2);
+        
+        System.out.println("Intersection: " + list1); // Output: [3, 4, 5]
+    }
+}
+```
+
+---
+
+### 4. **How do you sort a `Map` by its values?**
+
+You can use a `LinkedHashMap` to maintain insertion order after sorting by values.
+
+```java
+import java.util.*;
+import java.util.stream.*;
+
+public class SortMapByValue {
+    public static void main(String[] args) {
+        Map<String, Integer> map = new HashMap<>();
+        map.put("apple", 3);
+        map.put("banana", 1);
+        map.put("orange", 2);
+        
+        Map<String, Integer> sortedMap = map.entrySet()
+            .stream()
+            .sorted(Map.Entry.comparingByValue())
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                Map.Entry::getValue,
+                (e1, e2) -> e1,
+                LinkedHashMap::new
+            ));
+        
+        System.out.println("Map sorted by values: " + sortedMap);
+    }
+}
+```
+
+---
+
+### 5. **How do you find the first non-repeating character in a string using collections?**
+
+Use a `LinkedHashMap` to maintain insertion order and count occurrences.
+
+```java
+import java.util.*;
+
+public class FirstNonRepeatingCharacter {
+    public static void main(String[] args) {
+        String str = "swiss";
+        Map<Character, Integer> charCount = new LinkedHashMap<>();
+        
+        for (char c : str.toCharArray()) {
+            charCount.put(c, charCount.getOrDefault(c, 0) + 1);
+        }
+        
+        for (Map.Entry<Character, Integer> entry : charCount.entrySet()) {
+            if (entry.getValue() == 1) {
+                System.out.println("First non-repeating character: " + entry.getKey());
+                break;
+            }
+        }
+    }
+}
+```
+
+---
+
+### 6. **How do you reverse a `List` in Java?**
+
+You can use `Collections.reverse()` to reverse the elements of a list in place.
+
+```java
+import java.util.*;
+
+public class ReverseList {
+    public static void main(String[] args) {
+        List<Integer> list = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5));
+        
+        Collections.reverse(list);
+        
+        System.out.println("Reversed list: " + list);
+    }
+}
+```
+
+---
+
+### 7. **How do you implement a LRU Cache in Java using Collections?**
+
+Use a `LinkedHashMap` with access order to implement an LRU Cache.
+
+```java
+import java.util.*;
+
+class LRUCache<K, V> extends LinkedHashMap<K, V> {
+    private final int capacity;
+
+    public LRUCache(int capacity) {
+        super(capacity, 0.75f, true);
+        this.capacity = capacity;
+    }
+
+    @Override
+    protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+        return size() > capacity;
+    }
+
+    public static void main(String[] args) {
+        LRUCache<Integer, String> cache = new LRUCache<>(3);
+        cache.put(1, "one");
+        cache.put(2, "two");
+        cache.put(3, "three");
+        cache.get(1); // Access element to move it to the most recent position
+        cache.put(4, "four"); // This will evict key 2
+
+        System.out.println(cache.keySet()); // Output: [3, 1, 4]
+    }
+}
+```
+
+---
+
+### 8. **How do you convert a `List` of strings into a single comma-separated string?**
+
+Use `String.join()` or Java Streams to concatenate list elements.
+
+```java
+import java.util.*;
+
+public class ListToString {
+    public static void main(String[] args) {
+        List<String> list = Arrays.asList("apple", "banana", "orange");
+        
+        String result = String.join(", ", list);
+        System.out.println("Comma-separated string: " + result);
+    }
+}
+```
+
+---
+
+### 9. **How do you find the maximum occurring element in an array using collections?**
+
+Use a `HashMap` to count occurrences and find the maximum.
+
+```java
+import java.util.*;
+
+public class MaxOccurringElement {
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 2, 3, 3, 3, 4, 5};
+        
+        Map<Integer, Integer> countMap = new HashMap<>();
+        
+        for (int num : arr) {
+            countMap.put(num, countMap.getOrDefault(num, 0) + 1);
+        }
+        
+        int maxCount = 0;
+        int maxElement = -1;
+        
+        for (Map.Entry<Integer, Integer> entry : countMap.entrySet()) {
+            if (entry.getValue() > maxCount) {
+                maxCount = entry.getValue();
+                maxElement = entry.getKey();
+            }
+        }
+        
+        System.out.println("Max occurring element: " + maxElement);
+    }
+}
+```
+
+---
+
+### 10. **How do you shuffle elements in a `List` in Java?**
+
+You can use `Collections.shuffle()` to randomly shuffle elements in a list.
+
+```java
+import java.util.*;
+
+public class ShuffleList {
+    public static void main(String[] args) {
+        List<Integer> list = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5));
+        
+        Collections.shuffle(list);
+        
+        System.out.println("Shuffled list: " + list);
+    }
+}
+```
+
+---
+
+These questions cover a variety of Java Collection concepts and methods, from basic operations to more complex data manipulation tasks. Understanding these examples will help you perform well in coding interviews focusing on Java collections.
+
