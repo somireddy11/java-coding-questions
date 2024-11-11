@@ -661,6 +661,185 @@ public class ShuffleList {
 }
 ```
 
+
+Here are some Java coding questions that cover **Collections**, **Multithreading**, **Object-Oriented Programming (OOP)**, and **Exception Handling**. These questions will test various aspects of these topics.
+
+---
+
+### 1. **Collections Question**
+
+**Question**: Write a Java program to find the top three most frequently occurring words in a list of strings. Use collections to store and process the data.
+
+**Solution Outline**:
+1. Use a `Map<String, Integer>` to store the frequency of each word.
+2. Sort the entries in the map by value.
+3. Retrieve the top three entries.
+
+**Example**:
+```java
+import java.util.*;
+
+public class TopThreeWords {
+    public static List<String> findTopThreeWords(List<String> words) {
+        Map<String, Integer> wordCount = new HashMap<>();
+        
+        // Count the frequency of each word
+        for (String word : words) {
+            wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
+        }
+        
+        // Sort the map entries by frequency in descending order
+        List<Map.Entry<String, Integer>> sortedEntries = new ArrayList<>(wordCount.entrySet());
+        sortedEntries.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+        
+        // Retrieve the top three words
+        List<String> topThreeWords = new ArrayList<>();
+        for (int i = 0; i < Math.min(3, sortedEntries.size()); i++) {
+            topThreeWords.add(sortedEntries.get(i).getKey());
+        }
+        
+        return topThreeWords;
+    }
+
+    public static void main(String[] args) {
+        List<String> words = Arrays.asList("apple", "banana", "apple", "orange", "banana", "apple", "grape", "grape");
+        System.out.println(findTopThreeWords(words)); // Output example: [apple, banana, grape]
+    }
+}
+```
+
+---
+
+### 2. **Multithreading Question**
+
+**Question**: Create a Java program with two threads. The first thread prints numbers from 1 to 50, and the second thread prints numbers from 51 to 100. Ensure that both threads complete their tasks sequentially.
+
+**Solution Outline**:
+1. Use a `CountDownLatch` or `join()` to make sure the second thread only starts after the first thread completes.
+
+**Example**:
+```java
+public class SequentialThreads {
+    public static void main(String[] args) {
+        Thread t1 = new Thread(() -> {
+            for (int i = 1; i <= 50; i++) {
+                System.out.println("Thread 1: " + i);
+            }
+        });
+
+        Thread t2 = new Thread(() -> {
+            for (int i = 51; i <= 100; i++) {
+                System.out.println("Thread 2: " + i);
+            }
+        });
+
+        try {
+            t1.start();
+            t1.join(); // Ensures t1 completes before t2 starts
+            t2.start();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+---
+
+### 3. **Object-Oriented Programming (OOP) Question**
+
+**Question**: Design a simple `BankAccount` class with methods to deposit, withdraw, and check balance. Include checks to prevent withdrawing more than the available balance.
+
+**Solution Outline**:
+1. Define fields for `balance`.
+2. Define methods `deposit()`, `withdraw()`, and `getBalance()` with necessary validation.
+
+**Example**:
+```java
+class BankAccount {
+    private double balance;
+
+    public BankAccount(double initialBalance) {
+        this.balance = initialBalance;
+    }
+
+    public synchronized void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            System.out.println("Deposited: " + amount);
+        }
+    }
+
+    public synchronized void withdraw(double amount) {
+        if (amount > balance) {
+            System.out.println("Insufficient balance");
+        } else {
+            balance -= amount;
+            System.out.println("Withdrew: " + amount);
+        }
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public static void main(String[] args) {
+        BankAccount account = new BankAccount(500);
+        account.deposit(200);
+        account.withdraw(100);
+        account.withdraw(700); // Should display "Insufficient balance"
+        System.out.println("Final Balance: " + account.getBalance());
+    }
+}
+```
+
+---
+
+### 4. **Exception Handling Question**
+
+**Question**: Write a Java method that reads an integer from the user and throws a custom exception if the number is negative. The custom exception should be named `NegativeNumberException`.
+
+**Solution Outline**:
+1. Create a custom exception `NegativeNumberException`.
+2. Implement a method that reads a number, checks if it's negative, and throws the exception if necessary.
+
+**Example**:
+```java
+import java.util.Scanner;
+
+class NegativeNumberException extends Exception {
+    public NegativeNumberException(String message) {
+        super(message);
+    }
+}
+
+public class NumberChecker {
+    public static void checkPositiveNumber(int number) throws NegativeNumberException {
+        if (number < 0) {
+            throw new NegativeNumberException("Number is negative: " + number);
+        } else {
+            System.out.println("Number is positive: " + number);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter a number: ");
+        int number = scanner.nextInt();
+
+        try {
+            checkPositiveNumber(number);
+        } catch (NegativeNumberException e) {
+            System.out.println("Caught exception: " + e.getMessage());
+        }
+    }
+}
+```
+
+---
+
+These examples cover the essentials of Collections, Multithreading, OOP, and Exception Handling in Java and provide a good foundation for tackling interview questions in these areas.
+
 ---
 
 These questions cover a variety of Java Collection concepts and methods, from basic operations to more complex data manipulation tasks. Understanding these examples will help you perform well in coding interviews focusing on Java collections.
