@@ -1052,3 +1052,201 @@ These examples cover the essentials of Collections, Multithreading, OOP, and Exc
 
 These questions cover a variety of Java Collection concepts and methods, from basic operations to more complex data manipulation tasks. Understanding these examples will help you perform well in coding interviews focusing on Java collections.
 
+
+
+Here's a sample interview coding question on `ArrayList` for Java, including variations to challenge understanding of basic operations, algorithmic thinking, and edge cases.
+
+---
+
+### Problem 1: Remove Duplicates from an `ArrayList`
+**Question**: Given an `ArrayList<Integer>`, write a function to remove all duplicate elements and return a list that contains only unique elements. Preserve the order of first occurrence.
+
+#### Example
+```java
+Input: [1, 2, 2, 3, 4, 4, 5]
+Output: [1, 2, 3, 4, 5]
+```
+
+#### Solution
+This can be done by iterating through the list and checking each element's presence in a `Set`. If it’s not in the set, add it to both the set and the result list.
+
+```java
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+
+public class RemoveDuplicates {
+    public static List<Integer> removeDuplicates(List<Integer> list) {
+        LinkedHashSet<Integer> set = new LinkedHashSet<>(list); // Preserves order of first occurrence
+        return new ArrayList<>(set); // Convert the set back to an ArrayList
+    }
+
+    public static void main(String[] args) {
+        ArrayList<Integer> list = new ArrayList<>(List.of(1, 2, 2, 3, 4, 4, 5));
+        System.out.println(removeDuplicates(list)); // Output: [1, 2, 3, 4, 5]
+    }
+}
+```
+
+---
+
+### Problem 2: Find Common Elements in Two `ArrayLists`
+**Question**: Write a function that takes two `ArrayList<Integer>` objects and returns an `ArrayList` containing their common elements. The result should not contain duplicates, even if both lists have duplicate values.
+
+#### Example
+```java
+Input: list1 = [1, 2, 2, 3, 4], list2 = [2, 3, 3, 5]
+Output: [2, 3]
+```
+
+#### Solution
+Using a `Set` to collect common elements without duplicates is efficient. We can add one list’s elements to a set, then filter by the second list.
+
+```java
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+public class CommonElements {
+    public static List<Integer> findCommonElements(List<Integer> list1, List<Integer> list2) {
+        Set<Integer> set1 = new HashSet<>(list1);
+        Set<Integer> commonElements = new HashSet<>();
+
+        for (int num : list2) {
+            if (set1.contains(num)) {
+                commonElements.add(num);
+            }
+        }
+        
+        return new ArrayList<>(commonElements);
+    }
+
+    public static void main(String[] args) {
+        ArrayList<Integer> list1 = new ArrayList<>(List.of(1, 2, 2, 3, 4));
+        ArrayList<Integer> list2 = new ArrayList<>(List.of(2, 3, 3, 5));
+        System.out.println(findCommonElements(list1, list2)); // Output: [2, 3]
+    }
+}
+```
+
+---
+
+### Problem 3: Rotate an `ArrayList` to the Right by `k` Positions
+**Question**: Given an `ArrayList<Integer>` and an integer `k`, rotate the list to the right by `k` positions. Handle cases where `k` is larger than the size of the list.
+
+#### Example
+```java
+Input: list = [1, 2, 3, 4, 5], k = 2
+Output: [4, 5, 1, 2, 3]
+```
+
+#### Solution
+To rotate the list, find the point where it needs to be split (`n - k`), where `n` is the size of the list. Rearrange the list by reordering the two parts.
+
+```java
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class RotateList {
+    public static List<Integer> rotateRight(List<Integer> list, int k) {
+        int n = list.size();
+        if (n == 0) return list; // Edge case: empty list
+        
+        k = k % n; // Handle cases where k > n
+        if (k == 0) return list; // No rotation needed
+        
+        List<Integer> rotatedList = new ArrayList<>(list.subList(n - k, n));
+        rotatedList.addAll(list.subList(0, n - k));
+        return rotatedList;
+    }
+
+    public static void main(String[] args) {
+        ArrayList<Integer> list = new ArrayList<>(List.of(1, 2, 3, 4, 5));
+        System.out.println(rotateRight(list, 2)); // Output: [4, 5, 1, 2, 3]
+    }
+}
+```
+
+---
+
+### Problem 4: Find the Most Frequent Element in an `ArrayList`
+**Question**: Write a function that takes an `ArrayList<Integer>` and returns the most frequently occurring element. If there are multiple elements with the same highest frequency, return any of them.
+
+#### Example
+```java
+Input: [1, 3, 2, 3, 4, 3, 2, 2]
+Output: 3
+```
+
+#### Solution
+Use a `HashMap` to store the count of each element, then find the element with the highest frequency.
+
+```java
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class MostFrequentElement {
+    public static int findMostFrequent(List<Integer> list) {
+        Map<Integer, Integer> frequencyMap = new HashMap<>();
+        
+        // Count frequencies
+        for (int num : list) {
+            frequencyMap.put(num, frequencyMap.getOrDefault(num, 0) + 1);
+        }
+        
+        // Find the most frequent element
+        int mostFrequent = list.get(0);
+        int maxCount = 0;
+        for (Map.Entry<Integer, Integer> entry : frequencyMap.entrySet()) {
+            if (entry.getValue() > maxCount) {
+                maxCount = entry.getValue();
+                mostFrequent = entry.getKey();
+            }
+        }
+        
+        return mostFrequent;
+    }
+
+    public static void main(String[] args) {
+        ArrayList<Integer> list = new ArrayList<>(List.of(1, 3, 2, 3, 4, 3, 2, 2));
+        System.out.println(findMostFrequent(list)); // Output: 3
+    }
+}
+```
+
+---
+
+### Problem 5: Remove All Occurrences of an Element in an `ArrayList`
+**Question**: Write a function that removes all occurrences of a specified element from an `ArrayList<Integer>`, modifying the list in place.
+
+#### Example
+```java
+Input: list = [1, 2, 2, 3, 4, 2], element = 2
+Output: [1, 3, 4]
+```
+
+#### Solution
+Use the `removeIf` method in Java 8+ to efficiently remove all occurrences of a specified element.
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+public class RemoveOccurrences {
+    public static void removeElement(List<Integer> list, int element) {
+        list.removeIf(num -> num == element); // Removes all occurrences of `element`
+    }
+
+    public static void main(String[] args) {
+        ArrayList<Integer> list = new ArrayList<>(List.of(1, 2, 2, 3, 4, 2));
+        removeElement(list, 2);
+        System.out.println(list); // Output: [1, 3, 4]
+    }
+}
+```
+
+These examples cover some typical operations on `ArrayList`, like removing duplicates, finding common elements, rotating, finding the most frequent element, and removing specific elements, each of which can help build understanding of `ArrayList` manipulation and edge case handling.
