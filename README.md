@@ -1250,3 +1250,318 @@ public class RemoveOccurrences {
 ```
 
 These examples cover some typical operations on `ArrayList`, like removing duplicates, finding common elements, rotating, finding the most frequent element, and removing specific elements, each of which can help build understanding of `ArrayList` manipulation and edge case handling.
+
+
+
+Here are the **detailed solutions and explanations** for all the Java array coding questions:
+
+---
+
+### **1. Reversing an Array**
+```java
+public class ReverseArray {
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3, 4, 5};
+        int n = arr.length;
+        
+        for (int i = 0; i < n / 2; i++) {
+            int temp = arr[i];
+            arr[i] = arr[n - i - 1];
+            arr[n - i - 1] = temp;
+        }
+        
+        for (int num : arr) {
+            System.out.print(num + " ");
+        }
+    }
+}
+```
+**Explanation:**  
+- Swap elements from start and end using a temporary variable.
+- Iterate only till the middle of the array.
+
+---
+
+### **2. Find the Maximum and Minimum Elements in an Array**
+```java
+public class MinMaxArray {
+    public static void main(String[] args) {
+        int[] arr = {10, 20, 30, 5, 40};
+        int max = arr[0], min = arr[0];
+        
+        for (int num : arr) {
+            if (num > max) max = num;
+            if (num < min) min = num;
+        }
+        
+        System.out.println("Max: " + max);
+        System.out.println("Min: " + min);
+    }
+}
+```
+**Explanation:**  
+- Iterate through the array, updating the `max` and `min` variables.
+
+---
+
+### **3. Check if an Array is Sorted**
+```java
+public class CheckSorted {
+    public static boolean isSorted(int[] arr) {
+        for (int i = 0; i < arr.length - 1; i++) {
+            if (arr[i] > arr[i + 1]) return false;
+        }
+        return true;
+    }
+    
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3, 4, 5};
+        System.out.println(isSorted(arr));
+    }
+}
+```
+**Explanation:**  
+- Check if every adjacent pair satisfies `arr[i] <= arr[i + 1]`.
+
+---
+
+### **4. Find the Sum of Elements in an Array**
+```java
+public class SumArray {
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3, 4};
+        int sum = 0;
+        
+        for (int num : arr) {
+            sum += num;
+        }
+        
+        System.out.println("Sum: " + sum);
+    }
+}
+```
+**Explanation:**  
+- Use a loop to add all elements to the `sum`.
+
+---
+
+### **5. Find Duplicate Elements in an Array**
+```java
+import java.util.HashSet;
+
+public class FindDuplicates {
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3, 2, 4, 5, 1};
+        HashSet<Integer> seen = new HashSet<>();
+        HashSet<Integer> duplicates = new HashSet<>();
+        
+        for (int num : arr) {
+            if (!seen.add(num)) {
+                duplicates.add(num);
+            }
+        }
+        
+        System.out.println("Duplicates: " + duplicates);
+    }
+}
+```
+**Explanation:**  
+- Use a `HashSet` to track seen elements. If `add()` returns `false`, it’s a duplicate.
+
+---
+
+### **6. Rotate an Array**
+```java
+import java.util.Arrays;
+
+public class RotateArray {
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3, 4, 5};
+        int k = 2;  // Number of rotations
+        int n = arr.length;
+        k %= n;  // Handle cases where k > n
+
+        reverse(arr, 0, n - 1);
+        reverse(arr, 0, k - 1);
+        reverse(arr, k, n - 1);
+
+        System.out.println(Arrays.toString(arr));
+    }
+
+    private static void reverse(int[] arr, int start, int end) {
+        while (start < end) {
+            int temp = arr[start];
+            arr[start] = arr[end];
+            arr[end] = temp;
+            start++;
+            end--;
+        }
+    }
+}
+```
+**Explanation:**  
+- Reverse the entire array, then reverse individual parts.
+
+---
+
+### **7. Merge Two Sorted Arrays**
+```java
+import java.util.Arrays;
+
+public class MergeSortedArrays {
+    public static void main(String[] args) {
+        int[] arr1 = {1, 3, 5};
+        int[] arr2 = {2, 4, 6};
+        int[] result = new int[arr1.length + arr2.length];
+
+        int i = 0, j = 0, k = 0;
+
+        while (i < arr1.length && j < arr2.length) {
+            if (arr1[i] < arr2[j]) result[k++] = arr1[i++];
+            else result[k++] = arr2[j++];
+        }
+
+        while (i < arr1.length) result[k++] = arr1[i++];
+        while (j < arr2.length) result[k++] = arr2[j++];
+
+        System.out.println(Arrays.toString(result));
+    }
+}
+```
+**Explanation:**  
+- Use two pointers to merge arrays in sorted order.
+
+---
+
+### **8. Move Zeroes to the End**
+```java
+public class MoveZeroes {
+    public static void main(String[] args) {
+        int[] arr = {0, 1, 0, 3, 12};
+        int pos = 0;
+
+        for (int num : arr) {
+            if (num != 0) arr[pos++] = num;
+        }
+
+        while (pos < arr.length) {
+            arr[pos++] = 0;
+        }
+
+        for (int num : arr) {
+            System.out.print(num + " ");
+        }
+    }
+}
+```
+**Explanation:**  
+- Move non-zero elements forward and fill the rest with zeros.
+
+---
+
+### **9. Find the Subarray with Maximum Sum (Kadane's Algorithm)**
+```java
+public class MaxSubarraySum {
+    public static void main(String[] args) {
+        int[] arr = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
+        int maxSum = Integer.MIN_VALUE, currentSum = 0;
+
+        for (int num : arr) {
+            currentSum = Math.max(num, currentSum + num);
+            maxSum = Math.max(maxSum, currentSum);
+        }
+
+        System.out.println("Maximum Subarray Sum: " + maxSum);
+    }
+}
+```
+**Explanation:**  
+- Maintain a running sum and reset it if it becomes negative.
+
+---
+
+### **10. Find the Missing Number in an Array**
+```java
+public class MissingNumber {
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 4, 6, 3, 7, 8};
+        int n = arr.length + 1;  // Including the missing number
+        int totalSum = n * (n + 1) / 2;
+        int arraySum = 0;
+
+        for (int num : arr) {
+            arraySum += num;
+        }
+
+        System.out.println("Missing Number: " + (totalSum - arraySum));
+    }
+}
+```
+**Explanation:**  
+- Use the sum formula for `1 to n`.
+
+---
+
+### **11. Find All Pairs with a Given Sum**
+```java
+import java.util.HashSet;
+
+public class PairsWithSum {
+    public static void main(String[] args) {
+        int[] arr = {2, 4, 3, 5, 6, 1, 7};
+        int target = 8;
+        HashSet<Integer> seen = new HashSet<>();
+
+        for (int num : arr) {
+            int complement = target - num;
+            if (seen.contains(complement)) {
+                System.out.println("(" + complement + ", " + num + ")");
+            }
+            seen.add(num);
+        }
+    }
+}
+```
+**Explanation:**  
+- Use a `HashSet` to track complements for the target sum.
+
+---
+
+### **12. Find the Majority Element**
+```java
+public class MajorityElement {
+    public static void main(String[] args) {
+        int[] arr = {3, 3, 4, 2, 4, 4, 2, 4, 4};
+        int count = 0, candidate = -1;
+
+        for (int num : arr) {
+            if (count == 0) {
+                candidate = num;
+                count = 1;
+            } else if (num == candidate) {
+                count++;
+            } else {
+                count--;
+            }
+        }
+
+        // Verify candidate
+        count = 0;
+        for (int num : arr) {
+            if (num == candidate) count++;
+        }
+
+        if (count > arr.length / 2) {
+            System.out.println("Majority Element: " + candidate);
+        } else {
+            System.out.println("No Majority Element");
+        }
+    }
+}
+```
+**Explanation:**  
+- Use the Boyer-Moore Voting Algorithm.
+
+---
+
+Let me know if you’d like further clarifications or enhancements! 😊
