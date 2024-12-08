@@ -1714,6 +1714,80 @@ class Solution {
 
 
 
+Here’s a list of Java 8 coding exercises to help you practice its key features:
+
+---
+
+### **1. Functional Interfaces and Lambda Expressions**
+- Write a program to sort a list of strings using a lambda expression.
+- Create a custom functional interface and implement it using a lambda expression.
+- Filter a list of integers to only include even numbers using `Predicate`.
+
+---
+
+### **2. Streams API**
+- Use streams to filter a list of strings to only include those with a specific prefix.
+- Find the maximum and minimum number in a list using `Collectors` and streams.
+- Convert a list of strings to uppercase using `map`.
+- Count the number of strings in a list that start with a specific letter using `filter`.
+
+---
+
+### **3. Optional**
+- Create a method that returns an `Optional` and demonstrate how to handle the absence of a value using `isPresent` or `ifPresent`.
+- Use `orElse` and `orElseGet` to provide default values for an `Optional`.
+
+---
+
+### **4. Default and Static Methods in Interfaces**
+- Create an interface with a default method. Implement the interface and call the default method.
+- Add a static method to the interface and call it directly without creating an instance.
+
+---
+
+### **5. Method References**
+- Replace a lambda expression with a method reference in a sorting operation.
+- Use constructor references to create new objects from a list of strings.
+
+---
+
+### **6. Date and Time API**
+- Create a program to display the current date, time, and time zone using `LocalDateTime` and `ZoneId`.
+- Calculate the difference between two dates using `Duration` or `Period`.
+- Parse and format a date using `DateTimeFormatter`.
+
+---
+
+### **7. Collectors**
+- Group a list of strings by their length using `Collectors.groupingBy`.
+- Concatenate all strings in a list using `Collectors.joining`.
+- Partition a list of integers into odd and even using `Collectors.partitioningBy`.
+
+---
+
+### **8. Parallel Streams**
+- Use a parallel stream to process a large list of numbers and find their squares.
+- Compare the performance of a sequential stream and a parallel stream for a large dataset.
+
+---
+
+### **9. Custom Comparator with Lambda**
+- Sort a list of employees by their age and then by name using a lambda expression.
+- Implement a multi-level comparator for custom objects.
+
+---
+
+### **10. Map Enhancements**
+- Use `computeIfAbsent` to add a default value to a map.
+- Merge two maps using the `merge` method.
+- Iterate through a map using the `forEach` method.
+
+---
+
+Would you like detailed solutions for any of these exercises?
+
+
+
         }
         return stack.isEmpty() ;
     }
