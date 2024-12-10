@@ -1828,3 +1828,40 @@ class Solution {
     }
 }
 ```
+
+
+
+
+# first repeating character 
+'''java
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+public class FirstNonRepeatingCharacter {
+    public static void main(String[] args) {
+        String input = "swiss";
+        Character result = findFirstNonRepeatingCharacter(input);
+
+        if (result != null) {
+            System.out.println("First non-repeating character: " + result);
+        } else {
+            System.out.println("No non-repeating character found.");
+        }
+    }
+
+    public static Character findFirstNonRepeatingCharacter(String str) {
+        // Create a LinkedHashMap to maintain the order of characters
+        Map<Character, Long> charCountMap = str.chars()
+                .mapToObj(c -> (char) c)
+                .collect(LinkedHashMap::new, 
+                        (map, c) -> map.put(c, map.getOrDefault(c, 0L) + 1), 
+                        Map::putAll);
+
+        // Find the first character with a count of 1
+        return charCountMap.entrySet().stream()
+                .filter(entry -> entry.getValue() == 1)
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
+    }
+'''
