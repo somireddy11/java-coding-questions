@@ -1909,3 +1909,35 @@ return s1.substring(0,idx);
     }
 }
 ```
+Given an input string s, reverse the order of the words.
+A word is defined as a sequence of non-space characters. The words in s will be separated by at least one space.
+Return a string of the words in reverse order concatenated by a single space.
+Note that s may contain leading or trailing spaces or multiple spaces between two words. The returned string should only have a single space separating the words. Do not include any extra spaces.
+Example 1:
+
+Input: s = "the sky is blue"
+Output: "blue is sky the"
+
+
+```java
+class Solution {
+    public String reverseWords(String s) {
+     //   String[] str=s.split(" ");
+       // StringBuilder sb = new StringBuilder();
+      //  int j=0;
+        // for(int i=str.length-1;i>=0;i--){
+        //     if (!str[i].isEmpty()) {
+          // sb.append(str[i]);
+          // if(i!=0){
+            //sb.append(" ");
+          // }
+
+          return Arrays.stream(s.trim().split("\\s+"))
+          .reduce((a,b)->b+" "+a)
+          .orElse("");
+             
+         
+  //    return sb.toString().trim();  
+    }
+}
+```
