@@ -1941,3 +1941,31 @@ class Solution {
     }
 }
 ```
+
+
+# Longest Common Prefix of Strings
+
+
+```java
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
+public class LongestCommonPrefix {
+    public static void main(String[] args) {
+        String[] arr = { "geeksforgeeks", "geeks",
+                "geek", "geezer" };
+       System.out.println(LongestCommonPrefix.longestCommonPrefixInArray(arr));
+    }
+     public static String longestCommonPrefixInArray(String[] s){
+         Arrays.sort(s);
+        String first = s[0];
+        String last = s[s.length-1];
+        int minimum=Math.min(first.length(),last.length());
+        int i=0;
+        while(i<minimum&& first.charAt(i)==last.charAt(i)){
+            i++;
+        }
+         return last.substring(0,i);
+     }
+}
+```
