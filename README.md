@@ -1969,3 +1969,8 @@ public class LongestCommonPrefix {
      }
 }
 ```
+
+
+# Java Program to Count number of words
+
+![image](https://github.com/user-attachments/assets/c45cb57b-57b3-4acc-a440-cf4d786689a1)
