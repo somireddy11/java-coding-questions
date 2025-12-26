@@ -1974,3 +1974,38 @@ public class LongestCommonPrefix {
 # Java Program to Count number of words
 
 ![image](https://github.com/user-attachments/assets/c45cb57b-57b3-4acc-a440-cf4d786689a1)
+
+
+# Java Program to find Sum
+<img width="1168" height="676" alt="image" src="https://github.com/user-attachments/assets/4b2f76d0-7931-4723-8a5a-818332abb5a0" />
+```java
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+public class TwoSum {
+    public static void main(String[] args) {
+        TwoSum twoSum = new TwoSum();
+        int arr[] = {2,11,7,15};
+        int target =9;
+        int []result=twoSum.twoSum(arr,target);
+        Arrays.stream(result).forEach(i->System.out.println(i));
+
+    }
+    public int[] twoSum(int []nums,int target){
+        Map<Integer,Integer> map = new HashMap<>();
+        for(int i=0; i<nums.length;i++){
+            int complement = target-nums[i];
+            if(map.containsKey(complement)){
+                return new int []{map.get(complement),i};
+            }
+            else {
+                map.put(nums[i],i);
+            }
+        }
+
+        throw new IllegalArgumentException("no Match");
+    }
+}
+```
+
