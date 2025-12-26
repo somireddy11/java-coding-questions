@@ -1978,6 +1978,8 @@ public class LongestCommonPrefix {
 
 # Java Program to find Sum
 <img width="1168" height="676" alt="image" src="https://github.com/user-attachments/assets/4b2f76d0-7931-4723-8a5a-818332abb5a0" />
+
+
 ```java
 import java.util.Arrays;
 import java.util.HashMap;
