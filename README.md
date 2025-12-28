@@ -2020,6 +2020,5 @@ public class TwoSum {
 
 
 
-```java
-![Uploading image.png…]()
-```
+<img width="1182" height="681" alt="image" src="https://github.com/user-attachments/assets/a141f1af-c8d9-4c9d-a495-b5eb549554b3" />
+
