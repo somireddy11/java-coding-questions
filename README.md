@@ -2127,3 +2127,22 @@ public class FirstRepeatedCharacter {
     }
 }
 ```
+
+
+```java
+package coding;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class CharacterFrequency {
+    public static void main(String[] args) {
+        String str = "programming";
+        Map<Character,Integer> map = new HashMap<>();
+        for( Character ch : str.toCharArray()){
+            map.put(ch,map.getOrDefault(ch,0)+1);
+        }
+        map.forEach((k,v)-> System.out.println(k+"->"+v));
+    }
+}
+```
