@@ -2022,3 +2022,75 @@ public class TwoSum {
 
 <img width="1182" height="681" alt="image" src="https://github.com/user-attachments/assets/a141f1af-c8d9-4c9d-a495-b5eb549554b3" />
 
+CORE JAVA CODING QUESTIONS – MOST ASKED (5+ YEARS)
+STRING & CHARACTER PROBLEMS (EVERY INTERVIEW)
+1. Reverse a String without using reverse()
+2. Check if a String is Palindrome
+3. Find first non-repeated character in a String
+4. Find first repeated character in a String
+5. Count frequency of each character in a String
+6. Check if two Strings are Anagrams
+7. Remove duplicate characters from a String
+8. Find longest substring without repeating characters
+9. Check if String contains only digits
+10. Capitalize first letter of each word
+
+ARRAY & NUMBER LOGIC (TRAP QUESTIONS)
+11. Find second largest number in an array
+12. Find missing number in array 1..n
+13. Find duplicate elements in an array
+14. Sort array without using sort()
+15. Find all pairs with given sum
+16. Move all zeros to the end
+17. Find largest and smallest element in single iteration
+18. Check if array is rotated and sorted
+19. Find intersection of two arrays
+20. Find kth largest element
+
+STREAM API (INTERVIEW GOLD)
+21. Find frequency of elements using Streams
+22. Find duplicate elements using Streams
+23. Find first non-repeated character using Streams
+24. Sort a list in reverse order using Streams
+25. Find max and min using Streams
+26. Convert List to Map
+27. Group employees by department
+28. Find highest salary employee per department
+29. Sum of salaries using reduce()
+30. Find second highest number using Streams
+
+COLLECTIONS (5+ YOE FILTER)
+31. Iterate HashMap in different ways
+32. Sort HashMap by keys
+33. Sort HashMap by values
+34. Sort custom objects using Comparator
+35. Comparable vs Comparator (with code)
+36. Why HashMap allows one null key
+37. How HashMap handles hash collisions
+38. Internal working of HashMap (Java 8)
+39. Fail-fast vs Fail-safe iterators
+40. Why ConcurrentHashMap is faster
+
+MULTITHREADING (REJECTION ZONE)
+41. Print even and odd numbers using two threads
+42. Producer-Consumer problem
+43. Create thread using Runnable vs Thread
+44. What happens if start() is called twice
+45. Deadlock example and prevention
+46. volatile keyword example
+47. synchronized vs Lock
+48. ExecutorService example
+49. Callable vs Runnable
+50. Thread-safe Singleton implementation
+
+OOPS CODING (DESIGN THINKING)
+51. Singleton class – all versions
+52. Immutable class design
+53. Overriding equals() and hashCode()
+54. Why composition over inheritance
+55. Interface vs Abstract class (Java 8+)
+56. Diamond problem example
+57. Factory design pattern
+58. Builder design pattern
+59. Strategy design pattern example
+60. SOLID principles with code
