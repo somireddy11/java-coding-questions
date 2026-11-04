@@ -2128,7 +2128,7 @@ public class FirstRepeatedCharacter {
 }
 ```
 
-
+## Character Frequency
 ```java
 package coding;
 
