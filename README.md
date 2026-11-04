@@ -2146,3 +2146,37 @@ public class CharacterFrequency {
     }
 }
 ```
+
+### Anagram
+```java
+package coding;
+
+import java.util.Arrays;
+
+public class Anagram {
+    public static void main(String[] args) {
+        String str1="race";
+        String str2="caret";
+         str1 = str1.toLowerCase();
+         str2 = str2.toLowerCase();
+         if(str1.length()!=str2.length()){
+             System.out.println("not a anagram String");
+             return;
+         }
+        char[] charArray1 = str1.toCharArray();
+        char[] charArray = str2.toCharArray();
+        Arrays.sort(charArray1);
+        Arrays.sort(charArray);
+        int compare = Arrays.compare(charArray, charArray1);
+     //   System.out.println(compare);
+        if(Arrays.equals(charArray1,charArray)){
+            System.out.println("Anagram");
+        }
+        else {
+            System.out.println("Not a Anagram");
+        }
+
+
+    }
+}
+```
