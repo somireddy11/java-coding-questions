@@ -2022,80 +2022,91 @@ public class TwoSum {
 
 <img width="1182" height="681" alt="image" src="https://github.com/user-attachments/assets/a141f1af-c8d9-4c9d-a495-b5eb549554b3" />
 
-CORE JAVA CODING QUESTIONS – MOST ASKED (5+ YEARS)
-STRING & CHARACTER PROBLEMS (EVERY INTERVIEW)
-1. Reverse a String without using reverse()
-2. Check if a String is Palindrome
-3. Find first non-repeated character in a String
-4. Find first repeated character in a String
-5. Count frequency of each character in a String
+# CORE JAVA CODING QUESTIONS – MOST ASKED (5+ YEARS)
+
+## 1. STRING & CHARACTER PROBLEMS (EVERY INTERVIEW)
+
+1. Reverse a String without using `reverse()`
+2. Check if a String is a Palindrome
+3. Find the first non-repeated character in a String
+4. Find the first repeated character in a String
+5. Count the frequency of each character in a String
 6. Check if two Strings are Anagrams
 7. Remove duplicate characters from a String
-8. Find longest substring without repeating characters
-9. Check if String contains only digits
-10. Capitalize first letter of each word
+8. Find the longest substring without repeating characters
+9. Check if a String contains only digits
+10. Capitalize the first letter of each word
 
-ARRAY & NUMBER LOGIC (TRAP QUESTIONS)
-11. Find second largest number in an array
-12. Find missing number in array 1..n
+## 2. ARRAY & NUMBER LOGIC (TRAP QUESTIONS)
+
+11. Find the second-largest number in an array
+12. Find the missing number in an array from 1 to n
 13. Find duplicate elements in an array
-14. Sort array without using sort()
-15. Find all pairs with given sum
-16. Move all zeros to the end
-17. Find largest and smallest element in single iteration
-18. Check if array is rotated and sorted
-19. Find intersection of two arrays
-20. Find kth largest element
+14. Sort an array without using `sort()`
+15. Find all pairs with a given sum
+16. Move all zeros to the end of an array
+17. Find the largest and smallest elements in a single iteration
+18. Check if an array is rotated and sorted
+19. Find the intersection of two arrays
+20. Find the kth-largest element
 
-STREAM API (INTERVIEW GOLD)
-21. Find frequency of elements using Streams
+## 3. STREAM API (INTERVIEW GOLD)
+
+21. Find the frequency of elements using Streams
 22. Find duplicate elements using Streams
-23. Find first non-repeated character using Streams
-24. Sort a list in reverse order using Streams
-25. Find max and min using Streams
-26. Convert List to Map
+23. Find the first non-repeated character using Streams
+24. Sort a List in reverse order using Streams
+25. Find maximum and minimum values using Streams
+26. Convert a List to a Map
 27. Group employees by department
-28. Find highest salary employee per department
-29. Sum of salaries using reduce()
-30. Find second highest number using Streams
+28. Find the highest-salary employee in each department
+29. Calculate the sum of salaries using `reduce()`
+30. Find the second-highest number using Streams
 
-COLLECTIONS (5+ YOE FILTER)
-31. Iterate HashMap in different ways
-32. Sort HashMap by keys
-33. Sort HashMap by values
+## 4. COLLECTIONS (5+ YEARS EXPERIENCE)
+
+31. Iterate over a HashMap in different ways
+32. Sort a HashMap by keys
+33. Sort a HashMap by values
 34. Sort custom objects using Comparator
 35. Comparable vs Comparator (with code)
-36. Why HashMap allows one null key
-37. How HashMap handles hash collisions
-38. Internal working of HashMap (Java 8)
+36. Why does HashMap allow one null key?
+37. How does HashMap handle hash collisions?
+38. Explain the internal working of HashMap in Java 8
 39. Fail-fast vs Fail-safe iterators
-40. Why ConcurrentHashMap is faster
+40. Why is ConcurrentHashMap more scalable for concurrent access?
 
-MULTITHREADING (REJECTION ZONE)
+## 5. MULTITHREADING (REJECTION ZONE)
+
 41. Print even and odd numbers using two threads
-42. Producer-Consumer problem
-43. Create thread using Runnable vs Thread
-44. What happens if start() is called twice
-45. Deadlock example and prevention
-46. volatile keyword example
-47. synchronized vs Lock
-48. ExecutorService example
+42. Implement the Producer-Consumer problem
+43. Create a thread using Runnable vs extending Thread
+44. What happens if `start()` is called twice?
+45. Demonstrate deadlock and explain its prevention
+46. Explain the `volatile` keyword with an example
+47. `synchronized` vs `Lock`
+48. Demonstrate ExecutorService with an example
 49. Callable vs Runnable
-50. Thread-safe Singleton implementation
+50. Implement a thread-safe Singleton
 
-OOPS CODING (DESIGN THINKING)
-51. Singleton class – all versions
-52. Immutable class design
-53. Overriding equals() and hashCode()
-54. Why composition over inheritance
-55. Interface vs Abstract class (Java 8+)
-56. Diamond problem example
-57. Factory design pattern
-58. Builder design pattern
-59. Strategy design pattern example
-60. SOLID principles with code
+## 6. OOPS & DESIGN PATTERNS (DESIGN THINKING)
 
+51. Implement a Singleton class using different approaches
+52. Design an immutable class
+53. Override `equals()` and `hashCode()` correctly
+54. Why is composition preferred over inheritance?
+55. Interface vs Abstract Class (Java 8+)
+56. Explain the Diamond Problem with an example
+57. Implement the Factory Design Pattern
+58. Implement the Builder Design Pattern
+59. Implement the Strategy Design Pattern
+60. Explain SOLID Principles with code examples
 
+---
+
+**TOTAL: 60 CORE JAVA CODING & INTERVIEW QUESTIONS**
+
+## First repeating character
 ```java
 package coding;
 
