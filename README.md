@@ -2094,3 +2094,25 @@ OOPS CODING (DESIGN THINKING)
 58. Builder design pattern
 59. Strategy design pattern example
 60. SOLID principles with code
+
+
+```java
+package coding;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class FirstRepeatedCharacter {
+    public static void main(String[] args) {
+        String str = "programming";
+        Set<Character> set =new HashSet<>();
+        for(Character ch : str.toCharArray()){
+          //  System.out.println(ch +"->" + set.add(ch));
+            if(!set.add(ch)){
+                System.out.println("First non repeating charater is " + ch);
+                return;
+            }
+        }
+    }
+}
+```
