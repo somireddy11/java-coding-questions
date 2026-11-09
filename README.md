@@ -2204,3 +2204,1718 @@ System.out.println(Arrays.toString(arr));
     }
 }
 ```
+### Java Backend Developer Mock Interview – Day 7
+
+Day 7Senior Java DeveloperJava 17 / 216+ years experience level
+
+Today's session is designed around real senior Java backend developer interviews, with practical scenarios from enterprise applications, Spring Boot microservices, databases, and production troubleshooting.
+
+We will rotate the topic emphasis rather than repeat yesterday's questions. I'll also revisit your previously challenging areas: `CompletableFuture`, `AtomicInteger`, Hibernate relationships, `mappedBy`, `@JoinColumn`, Java Streams, and Two Sum.
+
+### Session plan
+
+| Section                     | Questions |
+| --------------------------- | --------- |
+| Core Java                   | 5         |
+| Spring Framework            | 4         |
+| Spring Boot                 | 4         |
+| Spring Data JPA / Hibernate | 5         |
+| Spring Security             | 4         |
+| Microservices               | 4         |
+| RESTful services            | 4         |
+| Total interview questions   | 30        |
+| Java coding problems        | 5         |
+
+### How we'll conduct the mock interview
+
+For every question:
+
+* First, attempt the answer yourself.
+
+* Compare it with the model answer.
+
+* I'll evaluate your response when you submit it.
+
+* I'll give you a score out of 10.
+
+* I'll ask a follow-up question similar to what a senior interviewer would ask.
+
+The model answers are included below so you can revise independently.
+
+### Part 1 – 30 Java backend interview questions
+
+### A. Core Java – Questions 1–5
+
+### 1\. What is the difference between fail-fast and fail-safe iterators?
+
+Frequently asked
+
+Model answer:
+
+Fail-fast iterators detect structural modifications to a collection while iterating, except through the iterator's own supported modification operations.
+
+They generally throw `ConcurrentModificationException`.
+
+Example:
+
+```java
+List<Integer> list =
+    new ArrayList<>(Arrays.asList(10, 20, 30));
+
+for (Integer value : list) {
+    list.add(40);
+}
+```
+
+This generally throws `ConcurrentModificationException`.
+
+Fail-safe is an informal term often used for iterators that tolerate concurrent modification, such as snapshot iterators.
+
+Example:
+
+```java
+List<Integer> list =
+    new CopyOnWriteArrayList<>(
+        Arrays.asList(10, 20, 30)
+    );
+
+for (Integer value : list) {
+    list.add(40);
+}
+```
+
+The iterator operates on a snapshot, so it doesn't throw the same exception.
+
+| Fail-fast                                 | Snapshot-style iterator                  |
+| ----------------------------------------- | ---------------------------------------- |
+| Detects structural modification           | Iterates over a snapshot                 |
+| May throw ConcurrentModificationException | Does not throw it for concurrent changes |
+| Example: ArrayList                        | Example: CopyOnWriteArrayList            |
+
+Senior-level follow-up: Why is CopyOnWriteArrayList not suitable for frequent write operations?
+
+Answer: Every mutation typically creates a new backing array, making writes expensive.
+
+### 2\. Explain the internal working of HashMap in Java 8 and later.
+
+Model answer:
+
+HashMap stores key-value pairs using an array of buckets.
+
+When inserting a key:
+
+* It calculates the key's hash.
+
+* It calculates the bucket index.
+
+* It checks whether the bucket is empty.
+
+* If occupied, it compares keys using `equals()`.
+
+* It adds the entry to the bucket.
+
+In Java 8 and later, collisions are handled using linked lists, which can be converted into balanced red-black trees under appropriate conditions.
+
+Important points:
+
+* Default initial capacity: 16.
+
+* Default load factor: 0.75.
+
+* Resizing happens when the threshold is exceeded.
+
+* Average lookup complexity: O(1).
+
+* Treeified bucket lookup: O(log n).
+
+Example:
+
+```java
+Map<Integer, String> map = new HashMap<>();
+
+map.put(101, "Java");
+map.put(102, "Spring");
+
+System.out.println(map.get(101));
+```
+
+Output:
+
+```text
+Java
+```
+
+Senior-level follow-up: What happens if two different keys have the same hash code?
+
+Answer: They can occupy the same bucket. HashMap uses `equals()` to distinguish them.
+
+### 3\. What is the difference between volatile, synchronized, and AtomicInteger?
+
+Model answer:
+
+These are used to solve different concurrency problems.
+
+| Feature          | volatile                | synchronized        | AtomicInteger      |
+| ---------------- | ----------------------- | ------------------- | ------------------ |
+| Visibility       | Yes                     | Yes                 | Yes                |
+| Atomic increment | No                      | Yes, when protected | Yes                |
+| Mutual exclusion | No                      | Yes                 | No general locking |
+| Main purpose     | Visibility and ordering | Critical sections   | Atomic operations  |
+
+Example of volatile:
+
+```java
+private volatile boolean running = true;
+```
+
+It ensures visibility of updates across threads.
+
+Example of synchronized:
+
+```java
+public synchronized void increment() {
+    counter++;
+}
+```
+
+It provides mutual exclusion around the method.
+
+Example of AtomicInteger:
+
+```java
+AtomicInteger counter = new AtomicInteger(0);
+
+counter.incrementAndGet();
+```
+
+It provides an atomic increment operation.
+
+Important: `volatile int counter` does not make `counter++` thread-safe because increment consists of reading, adding, and writing.
+
+### 4\. What is the difference between ExecutorService, Future, and CompletableFuture?
+
+Model answer:
+
+`ExecutorService` manages and executes asynchronous tasks using thread pools.
+
+`Future` represents the result of an asynchronous computation. It supports retrieving the result, checking completion, and cancellation.
+
+`CompletableFuture` provides advanced asynchronous composition and chaining.
+
+Example:
+
+```java
+ExecutorService executor =
+    Executors.newFixedThreadPool(2);
+
+Future<Integer> future =
+    executor.submit(() -> 100);
+
+System.out.println(future.get());
+
+executor.shutdown();
+```
+
+Output:
+
+```text
+100
+```
+
+CompletableFuture:
+
+```java
+CompletableFuture<Integer> future =
+    CompletableFuture.supplyAsync(() -> 10)
+        .thenApply(n -> n * 5);
+
+System.out.println(future.join());
+```
+
+Output:
+
+```text
+50
+```
+
+Senior-level point: Use a custom executor for important application workloads instead of allowing unrelated tasks to compete for the common ForkJoinPool.
+
+### 5\. Explain deadlock, livelock, and starvation.
+
+Model answer:
+
+Deadlock: Two or more threads wait indefinitely for locks held by each other.
+
+Livelock: Threads remain active and repeatedly react to each other, but make no useful progress.
+
+Starvation: A thread cannot obtain sufficient CPU time or resources because other threads continuously receive priority.
+
+Deadlock example:
+
+```text
+Thread 1:
+  Holds Lock A
+  Waits for Lock B
+
+Thread 2:
+  Holds Lock B
+  Waits for Lock A
+```
+
+Prevention:
+
+* Acquire locks in a consistent order.
+
+* Avoid unnecessary nested locking.
+
+* Use timed lock acquisition with `tryLock()`.
+
+* Keep synchronized sections small.
+
+### B. Spring Framework – Questions 6–9
+
+### 6\. Explain the complete Spring Bean lifecycle.
+
+Model answer:
+
+Spring manages bean creation, dependency injection, initialization, and destruction.
+
+Simplified lifecycle:
+
+```text
+Bean Definition Loaded
+        |
+Instantiate Bean
+        |
+Inject Dependencies
+        |
+Aware Callbacks
+        |
+BeanPostProcessor Before Initialization
+        |
+@PostConstruct
+        |
+InitializingBean.afterPropertiesSet()
+        |
+Custom init method
+        |
+BeanPostProcessor After Initialization
+        |
+Bean Ready for Use
+        |
+@PreDestroy
+        |
+Destroy Bean
+```
+
+Important annotations:
+
+```java
+@PostConstruct
+public void init() {
+    System.out.println("Bean initialized");
+}
+
+@PreDestroy
+public void destroy() {
+    System.out.println("Bean destroyed");
+}
+```
+
+Interview point: Spring may return a proxy instead of the original bean instance, especially when features such as transactions or AOP are involved.
+
+### 7\. Why is constructor injection preferred over field injection?
+
+Model answer:
+
+Constructor injection is preferred because:
+
+* Dependencies are explicit.
+
+* It supports immutable fields.
+
+* It makes unit testing easier.
+
+* It prevents partially initialized objects.
+
+* It helps detect circular dependencies.
+
+Example:
+
+```java
+@Service
+public class EmployeeService {
+
+    private final EmployeeRepository repository;
+
+    public EmployeeService(
+            EmployeeRepository repository) {
+        this.repository = repository;
+    }
+}
+```
+
+Spring automatically injects the dependency when there is a single constructor.
+
+### 8\. What is the difference between @Transactional propagation types?
+
+Model answer:
+
+Propagation defines how a transactional method behaves when another transaction already exists.
+
+| Propagation   | Behavior                                            |
+| ------------- | --------------------------------------------------- |
+| REQUIRED      | Joins existing transaction or creates one           |
+| REQUIRES_NEW  | Suspends existing transaction and creates a new one |
+| SUPPORTS      | Uses existing transaction if available              |
+| MANDATORY     | Requires an existing transaction                    |
+| NOT_SUPPORTED | Executes without a transaction                      |
+| NEVER         | Throws an exception if a transaction exists         |
+| NESTED        | Uses a nested transaction when supported            |
+
+Example:
+
+```java
+@Transactional(
+    propagation = Propagation.REQUIRES_NEW
+)
+public void saveAuditLog() {
+    // Independent transaction
+}
+```
+
+Practical scenario: An order operation fails, but you still want to preserve an audit record. A separate transaction can help, provided the audit method is invoked through the appropriate Spring proxy and its transaction configuration is supported.
+
+### 9\. What is Spring AOP? Explain advice, pointcut, and join point.
+
+Model answer:
+
+Spring AOP implements cross-cutting concerns such as logging, security checks, auditing, and transaction management.
+
+Important terms:
+
+* Aspect: Class containing cross-cutting logic.
+
+* Advice: Action performed at a particular point.
+
+* Pointcut: Expression identifying matching method executions.
+
+* Join point: Execution point where advice can be applied.
+
+Example:
+
+```java
+@Aspect
+@Component
+public class LoggingAspect {
+
+    @Before(
+        "execution(* com.example.service.*.*(..))"
+    )
+    public void logBefore() {
+        System.out.println("Method started");
+    }
+}
+```
+
+This executes logging advice before matching service methods.
+
+Senior-level point: Spring's proxy-based AOP does not intercept ordinary self-invocation through `this`.
+
+### C. Spring Boot – Questions 10–13
+
+### 10\. Explain how Spring Boot auto-configuration works.
+
+Model answer:
+
+Spring Boot automatically configures application components based on:
+
+* Classpath dependencies.
+
+* Existing beans.
+
+* Configuration properties.
+
+* Conditional annotations.
+
+Example:
+
+When Spring Web is available, Boot can configure the embedded web server and MVC infrastructure.
+
+Common annotations:
+
+```java
+@ConditionalOnClass
+@ConditionalOnMissingBean
+@ConditionalOnProperty
+@ConditionalOnBean
+```
+
+`@SpringBootApplication` combines:
+
+```java
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@ComponentScan
+```
+
+Senior-level point: Auto-configuration is conditional. A user-defined bean can cause certain default configurations to back off.
+
+### 11\. What is the difference between CommandLineRunner and ApplicationRunner?
+
+Model answer:
+
+Both execute code after the Spring application context has been initialized.
+
+CommandLineRunner:
+
+```java
+@Component
+public class MyRunner implements CommandLineRunner {
+
+    @Override
+    public void run(String... args) {
+        System.out.println(Arrays.toString(args));
+    }
+}
+```
+
+ApplicationRunner:
+
+```java
+@Component
+public class MyApplicationRunner
+        implements ApplicationRunner {
+
+    @Override
+    public void run(ApplicationArguments args) {
+        System.out.println(args.getOptionNames());
+    }
+}
+```
+
+Difference:
+
+* CommandLineRunner receives raw String arguments.
+
+* ApplicationRunner receives parsed ApplicationArguments.
+
+Common use cases include startup validation, initial configuration checks, and controlled initialization.
+
+### 12\. How do you implement centralized logging and correlation IDs in microservices?
+
+Model answer:
+
+A correlation ID helps track one request across multiple services.
+
+Example:
+
+```text
+API Gateway
+    |
+    | correlation-id: ABC123
+    v
+Order Service
+    |
+    | correlation-id: ABC123
+    v
+Payment Service
+    |
+    | correlation-id: ABC123
+    v
+Inventory Service
+```
+
+Implementation:
+
+* Generate or accept a correlation ID at the gateway.
+
+* Propagate it through HTTP headers.
+
+* Add it to logging context using MDC.
+
+* Include it in structured logs.
+
+* Propagate context correctly across asynchronous execution.
+
+Example:
+
+```java
+MDC.put("correlationId", correlationId);
+
+try {
+    log.info("Processing order");
+} finally {
+    MDC.remove("correlationId");
+}
+```
+
+Use distributed tracing with OpenTelemetry to trace requests across services.
+
+### 13\. Your Spring Boot application has high memory usage. How would you troubleshoot it?
+
+Model answer:
+
+I would follow a systematic approach:
+
+* Check JVM heap usage.
+
+* Inspect garbage collection logs.
+
+* Take a heap dump.
+
+* Analyze retained objects.
+
+* Identify memory leaks.
+
+* Check large collections and caching.
+
+* Review thread count and thread-local usage.
+
+* Check container memory limits.
+
+* Review database connection pools and application metrics.
+
+Useful JVM commands:
+
+```bash
+jcmd <pid> GC.heap_info
+
+jcmd <pid> GC.class_histogram
+
+jcmd <pid> GC.heap_dump heap.hprof
+```
+
+A high memory footprint does not always indicate a memory leak. It could be normal heap occupancy, excessive caching, large batch processing, or container/JVM sizing problems.
+
+### D. Spring Data JPA / Hibernate – Questions 14–18
+
+### 14\. What is the N+1 query problem? How do you resolve it?
+
+High-priority revision
+
+Model answer:
+
+The N+1 problem occurs when Hibernate executes one query to retrieve parent records and additional queries to retrieve their associated records.
+
+Example:
+
+```java
+List<Department> departments =
+    departmentRepository.findAll();
+
+for (Department dept : departments) {
+    System.out.println(
+        dept.getEmployees().size()
+    );
+}
+```
+
+If there are 10 departments, Hibernate might execute:
+
+```text
+1 query to retrieve departments
+10 queries to retrieve employees
+```
+
+Total: 11 queries.
+
+Solutions:
+
+JOIN FETCH
+
+```java
+@Query("""
+    SELECT DISTINCT d
+    FROM Department d
+    LEFT JOIN FETCH d.employees
+    """)
+List<Department> findAllWithEmployees();
+```
+
+EntityGraph
+
+```java
+@EntityGraph(attributePaths = "employees")
+List<Department> findAll();
+```
+
+Other approaches:
+
+* DTO projections.
+
+* Batch fetching.
+
+* Explicitly designed fetch plans.
+
+Senior-level point: Avoid blindly joining multiple collection associations because it can produce Cartesian row multiplication.
+
+### 15\. What is the difference between save(), persist(), merge(), and flush()?
+
+Model answer:
+
+These operations have different responsibilities.
+
+| Operation | Meaning                                                  |
+| --------- | -------------------------------------------------------- |
+| save()    | Spring Data JPA repository operation                     |
+| persist() | Makes a new entity managed                               |
+| merge()   | Copies detached entity state into a managed entity       |
+| flush()   | Synchronizes persistence context changes to the database |
+
+Example:
+
+```java
+Employee emp = new Employee();
+emp.setName("Ravi");
+
+entityManager.persist(emp);
+```
+
+For a detached entity:
+
+```java
+Employee managedEmployee =
+    entityManager.merge(detachedEmployee);
+```
+
+Important: `merge()` returns the managed instance. The passed detached instance remains detached.
+
+Also, `flush()` is not the same as committing a transaction.
+
+### 16\. Explain cascading in Hibernate. What is the difference between CascadeType.REMOVE and orphanRemoval?
+
+Model answer:
+
+Cascading propagates entity operations from a parent to associated entities.
+
+Example:
+
+```java
+@OneToMany(
+    mappedBy = "department",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true
+)
+private List<Employee> employees =
+    new ArrayList<>();
+```
+
+`CascadeType.REMOVE` propagates parent removal to child entities.
+
+`orphanRemoval = true` deletes a child entity when it is removed from the parent's relationship collection, within the appropriate managed lifecycle.
+
+Example:
+
+```java
+department.getEmployees().remove(employee);
+```
+
+With orphan removal enabled, the removed employee is scheduled for deletion.
+
+Senior-level warning: Use cascading carefully. It can cause unintended deletes, especially with many-to-many relationships or shared child entities.
+
+### 17\. Explain the difference between first-level cache and second-level cache.
+
+Model answer:
+
+First-level cache:
+
+* Associated with the persistence context.
+
+* Enabled by default.
+
+* Exists within an EntityManager/session.
+
+* Prevents repeated database retrieval of the same managed entity in that context.
+
+Second-level cache:
+
+* Shared across multiple persistence contexts.
+
+* Optional.
+
+* Requires cache configuration and a provider.
+
+* Can improve repeated reads.
+
+Example:
+
+```java
+Employee e1 =
+    entityManager.find(Employee.class, 101L);
+
+Employee e2 =
+    entityManager.find(Employee.class, 101L);
+```
+
+Within the same persistence context, Hibernate can return the already-managed entity without another database query.
+
+Senior-level point: Second-level caching requires careful eviction and consistency strategies when records change.
+
+### 18\. How do you prevent lost updates when multiple users update the same database record?
+
+Model answer:
+
+Two common strategies are optimistic and pessimistic locking.
+
+Optimistic locking:
+
+```java
+@Version
+private Long version;
+```
+
+Hibernate checks the version during updates.
+
+Pessimistic locking:
+
+```java
+@Lock(LockModeType.PESSIMISTIC_WRITE)
+@Query("SELECT e FROM Employee e WHERE e.id = :id")
+Optional<Employee> findByIdForUpdate(Long id);
+```
+
+This requests a database lock.
+
+Use optimistic locking when conflicts are relatively rare.
+
+Use pessimistic locking when concurrent modification is frequent and stronger coordination is necessary.
+
+### E. Spring Security – Questions 19–22
+
+### 19\. Explain AuthenticationManager and AuthenticationProvider.
+
+Model answer:
+
+`AuthenticationManager` is responsible for coordinating authentication.
+
+`ProviderManager` is the common implementation.
+
+It delegates authentication to one or more `AuthenticationProvider` implementations.
+
+Example flow:
+
+```text
+Login Request
+     |
+     v
+AuthenticationManager
+     |
+     v
+AuthenticationProvider
+     |
+     v
+UserDetailsService
+     |
+     v
+PasswordEncoder
+     |
+     v
+Authenticated Principal
+```
+
+An AuthenticationProvider checks credentials and returns an authenticated Authentication object if validation succeeds.
+
+### 20\. How do you secure REST APIs using JWT?
+
+Model answer:
+
+A typical JWT-based architecture:
+
+```text
+Client
+  |
+  | Login credentials
+  v
+Authentication Server
+  |
+  | Access Token
+  v
+Client
+  |
+  | Authorization: Bearer <token>
+  v
+Spring Security Resource Server
+  |
+  | Validate signature and claims
+  v
+Controller
+```
+
+Implementation considerations:
+
+* Validate JWT signatures.
+
+* Validate expiration.
+
+* Validate issuer and audience.
+
+* Configure role/scope authorization.
+
+* Use HTTPS.
+
+* Keep access tokens short-lived.
+
+* Protect refresh tokens.
+
+* Never store passwords in JWT payloads.
+
+JWT is a token format, not an encryption mechanism by default.
+
+### 21\. What is the difference between hasRole() and hasAuthority()?
+
+Model answer:
+
+`hasRole()` typically adds the `ROLE_` prefix when checking an authority.
+
+Example:
+
+```java
+@PreAuthorize("hasRole('ADMIN')")
+```
+
+This normally checks for:
+
+```text
+ROLE_ADMIN
+```
+
+`hasAuthority()` checks the exact authority.
+
+```java
+@PreAuthorize("hasAuthority('EMPLOYEE_READ')")
+```
+
+This checks for:
+
+```text
+EMPLOYEE_READ
+```
+
+Roles usually represent broader access categories, while authorities can represent granular permissions.
+
+### 22\. A user can access another user's employee record by changing the ID in the URL. How do you fix this?
+
+Model answer:
+
+This is an insecure direct object reference (IDOR) or broken object-level authorization problem.
+
+For example:
+
+```http
+GET /employees/101
+```
+
+A user changes the ID to:
+
+```http
+GET /employees/102
+```
+
+The application must verify that the authenticated user is allowed to access employee 102.
+
+Example:
+
+```java
+@PreAuthorize(
+    "@employeeAuthorization.canRead(authentication, #id)"
+)
+public Employee getEmployee(Long id) {
+    return repository.findById(id)
+        .orElseThrow();
+}
+```
+
+Authorization should be enforced on the server side, not just in the frontend.
+
+### F. Microservices – Questions 23–26
+
+### 23\. Explain the Saga Pattern in microservices.
+
+Model answer:
+
+The Saga Pattern manages a business transaction across multiple independent microservices without using a single distributed database transaction.
+
+Example: E-commerce order.
+
+```text
+Order Service
+     |
+     v
+Payment Service
+     |
+     v
+Inventory Service
+     |
+     v
+Shipping Service
+```
+
+If inventory reservation fails after payment succeeds, a compensating transaction may refund the payment.
+
+Two approaches:
+
+* Choreography: Services communicate using events.
+
+* Orchestration: A central orchestrator coordinates the workflow.
+
+Benefits:
+
+* Supports distributed business transactions.
+
+* Avoids tightly coupled distributed database transactions.
+
+Challenges:
+
+* Eventual consistency.
+
+* Compensation logic.
+
+* Duplicate events.
+
+* Failure recovery.
+
+### 24\. What is the difference between synchronous and asynchronous communication?
+
+Model answer:
+
+Synchronous communication waits for the downstream response.
+
+Example:
+
+```text
+Order Service
+     |
+     | REST
+     v
+Payment Service
+     |
+     v
+Response
+```
+
+Asynchronous communication uses messaging.
+
+Example:
+
+```text
+Order Service
+     |
+     v
+Kafka
+     |
+     v
+Payment Service
+```
+
+| Synchronous                 | Asynchronous                    |
+| --------------------------- | ------------------------------- |
+| Immediate response expected | Processing can happen later     |
+| Direct dependency           | Looser coupling                 |
+| Timeout concerns            | Delivery and duplicate concerns |
+| REST/gRPC                   | Kafka/RabbitMQ                  |
+
+Use synchronous communication when an immediate response is required. Use asynchronous communication for event-driven workflows and decoupled processing.
+
+### 25\. What is the difference between API Gateway and Service Registry?
+
+Model answer:
+
+API Gateway is the entry point for external client requests.
+
+Typical responsibilities:
+
+* Routing.
+
+* Authentication.
+
+* Rate limiting.
+
+* Request filtering.
+
+* SSL termination.
+
+Service Registry stores information about available service instances.
+
+Example:
+
+```text
+Client
+  |
+  v
+API Gateway
+  |
+  v
+Service Discovery
+  |
+  +---- Order Service
+  |
+  +---- Payment Service
+  |
+  +---- Inventory Service
+```
+
+The gateway handles incoming requests; service discovery helps locate service instances.
+
+### 26\. How would you handle duplicate Kafka messages in a payment processing application?
+
+Model answer:
+
+Kafka consumers may process duplicate messages, so the application should be designed for idempotency.
+
+Approach:
+
+* Assign a unique event ID.
+
+* Maintain a processed-event table.
+
+* Check whether the event has already been processed.
+
+* Apply the business operation transactionally.
+
+* Mark the event as processed.
+
+* Commit the Kafka offset at an appropriate point.
+
+Example database constraint:
+
+```sql
+CREATE TABLE PROCESSED_EVENTS (
+    EVENT_ID VARCHAR2(100) PRIMARY KEY,
+    PROCESSED_AT TIMESTAMP
+);
+```
+
+The processed-event record and business update should be committed atomically where possible.
+
+For payments, also enforce business-level uniqueness using payment or idempotency keys.
+
+### G. RESTful Services – Questions 27–30
+
+### 27\. Explain the difference between PUT and PATCH.
+
+Model answer:
+
+PUT generally replaces the target resource representation.
+
+PATCH applies partial modifications.
+
+PUT example:
+
+```http
+PUT /employees/101
+Content-Type: application/json
+```
+
+```json
+{
+  "name": "Ravi",
+  "salary": 70000,
+  "department": "IT"
+}
+```
+
+PATCH example:
+
+```http
+PATCH /employees/101
+Content-Type: application/json
+```
+
+```json
+{
+  "salary": 80000
+}
+```
+
+PUT is defined as idempotent. PATCH is not necessarily idempotent; that depends on the patch operation.
+
+### 28\. How do you handle large API responses efficiently?
+
+Model answer:
+
+I would consider:
+
+* Pagination.
+
+* DTO projections.
+
+* Database indexing.
+
+* Avoiding unnecessary entity serialization.
+
+* Compression.
+
+* Selective field retrieval.
+
+* Caching where appropriate.
+
+* Streaming for large exports.
+
+Example:
+
+```java
+Page<Employee> employees =
+    repository.findAll(
+        PageRequest.of(
+            0,
+            20,
+            Sort.by("name").ascending()
+        )
+    );
+```
+
+This retrieves a page rather than loading every employee into memory.
+
+### 29\. Explain HTTP status codes 200, 201, 204, 400, 401, 403, 404, and 500.
+
+Model answer:
+
+| Code | Meaning               | Typical scenario                           |
+| ---- | --------------------- | ------------------------------------------ |
+| 200  | OK                    | Successful GET                             |
+| 201  | Created               | New resource created                       |
+| 204  | No Content            | Successful operation without response body |
+| 400  | Bad Request           | Invalid request                            |
+| 401  | Unauthorized          | Missing or invalid authentication          |
+| 403  | Forbidden             | Authenticated but not permitted            |
+| 404  | Not Found             | Resource does not exist                    |
+| 500  | Internal Server Error | Unexpected server-side failure             |
+
+Remember:
+
+* 401: Authentication problem.
+
+* 403: Authorization problem.
+
+### 30\. Design an Employee Management REST API. What endpoints and architecture would you implement?
+
+Model answer:
+
+I would design the API using controller, service, repository, and database layers.
+
+Endpoints:
+
+| Method | Endpoint            | Purpose         |
+| ------ | ------------------- | --------------- |
+| POST   | /api/employees      | Create employee |
+| GET    | /api/employees/{id} | Get employee    |
+| GET    | /api/employees      | Get employees   |
+| PUT    | /api/employees/{id} | Update employee |
+| PATCH  | /api/employees/{id} | Partial update  |
+| DELETE | /api/employees/{id} | Delete employee |
+
+Architecture:
+
+```text
+Client
+  |
+  v
+Controller
+  |
+  v
+Service
+  |
+  v
+Repository
+  |
+  v
+Oracle Database
+```
+
+Additional implementation:
+
+* DTOs for requests and responses.
+
+* Bean Validation.
+
+* Global exception handling.
+
+* Spring Security.
+
+* Pagination and sorting.
+
+* Logging and correlation IDs.
+
+* Unit and integration tests.
+
+* OpenAPI documentation.
+
+For a production application, I would also consider auditing, optimistic locking, API compatibility, and monitoring.
+
+### Part 2 – Exactly 5 Java coding interview questions
+
+These problems are selected for Java backend interviews at the 5–7 year experience level.
+
+### Coding Question 1. Find the first non-repeated character in a String
+
+Core Java + Collections
+
+Problem:
+
+Input:
+
+```java
+String str = "swiss";
+```
+
+Expected output:
+
+```text
+w
+```
+
+Approach:
+
+Use LinkedHashMap to preserve character insertion order and count frequencies.
+
+Solution:
+
+```java
+import java.util.*;
+
+public class FirstNonRepeated {
+
+    public static void main(String[] args) {
+
+        String str = "swiss";
+
+        Map<Character, Integer> map =
+            new LinkedHashMap<>();
+
+        for (char ch : str.toCharArray()) {
+            map.put(ch, map.getOrDefault(ch, 0) + 1);
+        }
+
+        for (Map.Entry<Character, Integer> entry
+                : map.entrySet()) {
+
+            if (entry.getValue() == 1) {
+                System.out.println(entry.getKey());
+                break;
+            }
+        }
+    }
+}
+```
+
+Output:
+
+```text
+w
+```
+
+Complexity:
+
+* Time: O(n) expected.
+
+* Space: O(k), where k is the number of distinct characters.
+
+### Coding Question 2. Move all zeros to the end of an array without changing the order of non-zero elements
+
+Problem:
+
+Input:
+
+```java
+int[] arr = {0, 1, 0, 3, 12};
+```
+
+Expected output:
+
+```text
+[1, 3, 12, 0, 0]
+```
+
+Approach:
+
+Use two pointers. Move non-zero elements to the front, then fill the remaining positions with zero.
+
+Solution:
+
+```java
+import java.util.Arrays;
+
+public class MoveZeros {
+
+    public static void main(String[] args) {
+
+        int[] arr = {0, 1, 0, 3, 12};
+
+        int index = 0;
+
+        for (int num : arr) {
+
+            if (num != 0) {
+                arr[index++] = num;
+            }
+        }
+
+        while (index < arr.length) {
+            arr[index++] = 0;
+        }
+
+        System.out.println(Arrays.toString(arr));
+    }
+}
+```
+
+Output:
+
+```text
+[1, 3, 12, 0, 0]
+```
+
+Complexity:
+
+* Time: O(n).
+
+* Auxiliary space: O(1).
+
+### Coding Question 3. Find duplicate elements in an array using Java Streams
+
+Problem:
+
+Input:
+
+```java
+List<Integer> numbers =
+    Arrays.asList(1, 2, 3, 2, 4, 5, 1);
+```
+
+Expected output:
+
+```text
+[1, 2]
+```
+
+Approach:
+
+Use groupingBy to count frequencies and filter values appearing more than once.
+
+Solution:
+
+```java
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+public class DuplicateElements {
+
+    public static void main(String[] args) {
+
+        List<Integer> numbers =
+            Arrays.asList(1, 2, 3, 2, 4, 5, 1);
+
+        List<Integer> duplicates =
+            numbers.stream()
+                .collect(Collectors.groupingBy(
+                    Function.identity(),
+                    LinkedHashMap::new,
+                    Collectors.counting()
+                ))
+                .entrySet()
+                .stream()
+                .filter(entry -> entry.getValue() > 1)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        System.out.println(duplicates);
+    }
+}
+```
+
+Output:
+
+```text
+[1, 2]
+```
+
+Complexity:
+
+* Time: O(n) expected.
+
+* Space: O(k), where k is the number of distinct elements.
+
+### Coding Question 4. Find the missing number from an array containing numbers from 1 to N
+
+Problem:
+
+Input:
+
+```java
+int[] arr = {1, 2, 4, 5, 6};
+```
+
+Expected output:
+
+```text
+3
+```
+
+Approach:
+
+Calculate the expected sum using:
+
+Sum = \\frac{n(n+1)}{2}
+
+Subtract the actual array sum.
+
+Solution:
+
+```java
+public class MissingNumber {
+
+    public static void main(String[] args) {
+
+        int[] arr = {1, 2, 4, 5, 6};
+
+        int n = 6;
+
+        long expectedSum =
+            (long) n * (n + 1) / 2;
+
+        long actualSum = 0;
+
+        for (int num : arr) {
+            actualSum += num;
+        }
+
+        System.out.println(
+            expectedSum - actualSum
+        );
+    }
+}
+```
+
+Output:
+
+```text
+3
+```
+
+Complexity:
+
+* Time: O(n).
+
+* Auxiliary space: O(1).
+
+Note: This approach assumes exactly one number is missing, with no duplicates and all other numbers in the range 1 to N.
+
+### Coding Question 5. Implement producer-consumer using BlockingQueue
+
+Advanced multithreading
+
+Problem:
+
+Create one producer and one consumer.
+
+The producer adds messages to a BlockingQueue, and the consumer processes them.
+
+Approach:
+
+Use `ArrayBlockingQueue`.
+
+* Producer uses `put()`.
+
+* Consumer uses `take()`.
+
+* The queue automatically handles coordination and blocking.
+
+Solution:
+
+```java
+import java.util.concurrent.*;
+
+public class ProducerConsumer {
+
+    public static void main(String[] args) {
+
+        BlockingQueue<Integer> queue =
+            new ArrayBlockingQueue<>(5);
+
+        ExecutorService executor =
+            Executors.newFixedThreadPool(2);
+
+        executor.submit(() -> {
+
+            try {
+                for (int i = 1; i <= 5; i++) {
+                    queue.put(i);
+                    System.out.println(
+                        "Produced: " + i
+                    );
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
+
+        executor.submit(() -> {
+
+            try {
+                for (int i = 1; i <= 5; i++) {
+                    int value = queue.take();
+
+                    System.out.println(
+                        "Consumed: " + value
+                    );
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
+
+        executor.shutdown();
+    }
+}
+```
+
+Possible output:
+
+```text
+Produced: 1
+Produced: 2
+Consumed: 1
+Produced: 3
+Consumed: 2
+...
+Consumed: 5
+```
+
+The exact interleaving varies because the two threads execute concurrently.
+
+Complexity:
+
+* Time: O(1) per queue insertion/removal, excluding waiting.
+
+* Space: O(C), where C is the queue capacity.
+
+### Part 3 – Daily interview performance tracker
+
+Use this checklist to track the 35 problems.
+
+Day 7 progress
+
+### 0/35
+
+Core Java
+
+Fail-fast vs snapshot iterators
+
+HashMap internals
+
+volatile vs synchronized vs AtomicInteger
+
+ExecutorService vs Future vs CompletableFuture
+
+Deadlock vs livelock vs starvation
+
+Spring Framework
+
+Bean lifecycle
+
+Constructor injection
+
+Transaction propagation
+
+Spring AOP
+
+Spring Boot
+
+Auto-configuration
+
+CommandLineRunner vs ApplicationRunner
+
+Correlation IDs and logging
+
+High memory troubleshooting
+
+JPA / Hibernate
+
+N+1 problem
+
+save vs persist vs merge vs flush
+
+Cascade and orphanRemoval
+
+First-level vs second-level cache
+
+Optimistic vs pessimistic locking
+
+Spring Security
+
+AuthenticationManager and AuthenticationProvider
+
+JWT security
+
+hasRole vs hasAuthority
+
+IDOR protection
+
+Microservices
+
+Saga pattern
+
+Synchronous vs asynchronous communication
+
+API Gateway vs Service Registry
+
+Kafka duplicate messages
+
+RESTful Services
+
+PUT vs PATCH
+
+Large API response optimization
+
+HTTP status codes
+
+Employee REST API design
+
+Coding
+
+First non-repeated character
+
+Move zeros
+
+Duplicate elements using Streams
+
+Missing number
+
+Producer-consumer
+
+Reset progress
+
+### Part 4 – Start your interactive mock interview
+
+Now let's switch from preparation mode to actual interview mode.
+
+Question 1 of 30
+
+Core Java
+
+### Explain the internal working of HashMap in Java 8 and later.
+
+Imagine you are attending a senior Java developer technical interview.
+
+Your answer should cover:
+
+* How hashCode() works.
+
+* How bucket index is calculated.
+
+* How collisions are handled.
+
+* What happens during resizing.
+
+* Why equals() and hashCode() must be overridden consistently.
+
+Write your interview answer here:
+
+Submit my answer for evaluation
+
+I'll evaluate technical accuracy, completeness, clarity, and senior-level depth.
+
+My recommendation: Answer one question at a time rather than memorizing all 30 answers. The goal is to explain concepts confidently, write code independently, and handle follow-up questions without assistance.
