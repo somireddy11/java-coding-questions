@@ -3950,3 +3950,892 @@ public class MoveNegativeNumbers {
     }
 }
 ```
+Absolutely. Below is the complete answer key for all **30 Java interview questions, 10 SQL questions, and 5 Java coding problems**. You can use it as a revision document before your next interview.
+
+# **Part 1 – Java interview answers (30)**
+
+## **A. Core Java**
+
+**1. Java Record vs Regular Class**
+
+A record is a concise way to create a data carrier. Java automatically generates:
+
+- Constructor
+- Accessor methods
+- `equals()`
+- `hashCode()`
+- `toString()`
+
+```
+public record Employee(Long id, String name) {}
+```
+
+A regular class provides more flexibility for mutable state, inheritance, and complex business logic.
+
+Records are shallowly immutable, not deeply immutable. Use records for DTOs and value objects.
+
+**2. Explain PECS in Java Generics.**
+
+PECS means Producer Extends, Consumer Super.
+
+- `? extends T`: Use when reading values.
+- `? super T`: Use when adding values.
+
+```
+public static double sum(List<? extends Number> list) {
+    double total = 0;
+    for (Number n : list) {
+        total += n.doubleValue();
+    }
+    return total;
+}
+```
+
+```
+public static void add(List<? super Integer> list) {
+    list.add(10);
+}
+```
+
+Remember: Producer = extends; Consumer = super.
+
+**3. What are sealed classes?**
+
+Sealed classes restrict which classes can extend or implement them.
+
+```
+public sealed interface Payment
+    permits CardPayment, UpiPayment {}
+
+public final class CardPayment implements Payment {}
+
+public final class UpiPayment implements Payment {}
+```
+
+A permitted subclass must be `final`, `sealed`, or `non-sealed`.
+
+They are useful when modelling a controlled set of domain types.
+
+**4. How do you create an immutable class containing a mutable collection?**
+
+Use:
+
+- Private final fields.
+- Constructor initialization.
+- Defensive copies.
+- No setters.
+- Unmodifiable copies from getters.
+
+```
+public final class Team {
+
+    private final List<String> members;
+
+    public Team(List<String> members) {
+        this.members = new ArrayList<>(members);
+    }
+
+    public List<String> getMembers() {
+        return List.copyOf(members);
+    }
+}
+```
+
+This prevents external modifications to the internal collection.
+
+**5. How do you investigate a Java memory leak?**
+
+A memory leak occurs when objects are unintentionally retained and cannot be garbage collected.
+
+Investigation steps:
+
+1. Monitor heap usage.
+2. Check GC logs.
+3. Capture heap dumps.
+4. Compare heap dumps.
+5. Inspect retained heap and dominator trees.
+6. Look for static collections, ThreadLocal values, listeners, and unbounded caches.
+7. Use Java Flight Recorder.
+8. Fix the retention issue and retest.
+
+Useful tools: JVisualVM, Eclipse MAT, JConsole, and JFR.
+
+## **B. Spring Framework**
+
+**6. BeanFactoryPostProcessor vs BeanPostProcessor**
+
+| BeanFactoryPostProcessor              | BeanPostProcessor               |
+| ------------------------------------- | ------------------------------- |
+| Works on bean definitions             | Works on bean instances         |
+| Runs before normal bean instantiation | Runs around bean initialization |
+| Changes bean metadata                 | Can modify or wrap objects      |
+| Example: property configuration       | Example: AOP proxy creation     |
+
+**7. What is circular dependency in Spring?**
+
+A circular dependency occurs when two beans depend on each other.
+
+Example:
+
+```
+@Service
+class OrderService {
+    OrderService(PaymentService payment) {}
+}
+
+@Service
+class PaymentService {
+    PaymentService(OrderService order) {}
+}
+```
+
+Neither constructor can finish because each requires the other.
+
+Solutions:
+
+- Redesign service responsibilities.
+- Extract shared logic into another service.
+- Use events where appropriate.
+- Avoid unnecessary bidirectional dependencies.
+
+Constructor injection makes these cycles visible and generally prevents Spring from resolving them through early bean references.
+
+**8. What is&#x20;**`proxyBeanMethods = false`**?**
+
+```
+@Configuration(proxyBeanMethods = false)
+public class AppConfig {
+
+    @Bean
+    public Employee employee() {
+        return new Employee();
+    }
+}
+```
+
+By default, Spring enhances full configuration classes to intercept calls between `@Bean` methods.
+
+When `proxyBeanMethods = false`, those calls behave like ordinary Java method calls.
+
+Use method-parameter injection when one bean depends on another:
+
+```
+@Bean
+public EmployeeService employeeService(Employee employee) {
+    return new EmployeeService(employee);
+}
+```
+
+**9. How do you publish an event after transaction commit?**
+
+Use `@TransactionalEventListener`.
+
+```
+@Component
+public class OrderListener {
+
+    @TransactionalEventListener(
+        phase = TransactionPhase.AFTER_COMMIT
+    )
+    public void handle(OrderCreated event) {
+        System.out.println("Order committed");
+    }
+}
+```
+
+The listener executes after successful transaction commit.
+
+Useful for notifications and follow-up processing.
+
+For durable event publication, consider the transactional outbox pattern.
+
+## **C. Spring Boot**
+
+**10.&#x20;**`@Value`**&#x20;vs&#x20;**`@ConfigurationProperties`
+
+`@Value` injects individual configuration values.
+
+```
+@Value("${app.timeout}")
+private int timeout;
+```
+
+`@ConfigurationProperties` binds grouped configuration into a type-safe object.
+
+```
+@ConfigurationProperties(prefix = "app")
+public record AppProperties(
+    int timeout,
+    String environment
+) {}
+```
+
+Use `@ConfigurationProperties` for structured configuration and `@Value` for simple individual values.
+
+**11. How do you implement graceful shutdown?**
+
+Graceful shutdown allows an application to stop accepting new requests and finish existing requests.
+
+```
+server:
+  shutdown: graceful
+
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+```
+
+Important steps:
+
+1. Stop routing new requests.
+2. Allow in-flight requests to complete.
+3. Close resources.
+4. Stop message consumers safely.
+5. Configure sufficient container termination time.
+6. Monitor shutdown behaviour.
+
+**12. What is Micrometer? Explain metric cardinality.**
+
+Micrometer is an application metrics library used with monitoring systems.
+
+```
+@Component
+class PaymentMetrics {
+
+    private final Counter counter;
+
+    PaymentMetrics(MeterRegistry registry) {
+        counter = registry.counter("payments.completed");
+    }
+
+    public void recordPayment() {
+        counter.increment();
+    }
+}
+```
+
+Metrics can track payment counts, failures, processing times, and application health.
+
+Cardinality means the number of unique combinations of metric label values.
+
+Avoid using unique customer IDs or request IDs as metric labels because they can create excessive time series.
+
+**13. Explain your JDK 11 to JDK 21 migration project.**
+
+Interview-ready answer:
+
+"In my PWSG project, I worked on upgrading approximately 30 backend services from JDK 11 to JDK 21.
+
+First, we reviewed dependency compatibility, build configurations, Spring Boot compatibility, and existing test coverage.
+
+We upgraded the Gradle build configuration to Gradle 8.12.1 and aligned the services with Spring Boot 3.5.16.
+
+During migration, we addressed compilation and runtime compatibility issues, dependency upgrades, code-quality findings, and security vulnerabilities.
+
+We performed unit and integration testing, reviewed Sonar findings, addressed penetration-testing vulnerabilities, and validated the applications in the target environment.
+
+We also used AWS services such as CloudWatch to monitor application behaviour.
+
+The main challenge was ensuring compatibility and stability across multiple services rather than simply changing the Java version."
+
+## **D. Spring Data JPA / Hibernate**
+
+**14. Explain Hibernate entity lifecycle states.**
+
+There are four major states:
+
+| State     | Meaning                                             |
+| --------- | --------------------------------------------------- |
+| Transient | New object, not associated with persistence context |
+| Managed   | Tracked by Hibernate                                |
+| Detached  | Previously managed, but no longer tracked           |
+| Removed   | Marked for deletion                                 |
+
+Example:
+
+```
+Employee employee = new Employee(); // Transient
+
+entityManager.persist(employee);    // Managed
+
+entityManager.detach(employee);     // Detached
+
+entityManager.remove(
+    entityManager.merge(employee)
+);                                  // Removed
+```
+
+**15. Dirty checking vs flush vs commit**
+
+Dirty checking means Hibernate automatically detects changes to managed entities.
+
+```
+@Transactional
+public void updateEmployee(Long id) {
+
+    Employee employee =
+        repository.findById(id).orElseThrow();
+
+    employee.setSalary(80000);
+}
+```
+
+No explicit `save()` is normally required for an already managed entity.
+
+- `flush()`: Sends pending SQL changes to the database.
+- `commit()`: Completes the transaction and makes changes permanent.
+
+Flush does not mean commit. A transaction can still be rolled back after flushing.
+
+**16. How do you improve Hibernate batch insert performance?**
+
+Configure batching:
+
+```
+spring:
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+```
+
+Use periodic flushing and clearing:
+
+```
+for (int i = 0; i < employees.size(); i++) {
+
+    entityManager.persist(employees.get(i));
+
+    if (i % 50 == 0) {
+        entityManager.flush();
+        entityManager.clear();
+    }
+}
+```
+
+This reduces database round trips and persistence-context memory consumption.
+
+Check ID generation strategies because some strategies interfere with batching.
+
+**17. What are the problems with bulk JPQL updates?**
+
+Bulk JPQL updates execute directly against the database and bypass normal entity-by-entity dirty checking.
+
+```
+@Modifying
+@Query("""
+    update Employee e
+    set e.status = 'INACTIVE'
+    where e.department.id = :deptId
+""")
+int deactivateEmployees(Long deptId);
+```
+
+Problems:
+
+- Persistence context can contain stale entities.
+- Entity callbacks are not executed like normal entity updates.
+- Cascade behaviour is not equivalent to removing individual entities.
+
+Use flushing before and clearing after the operation when necessary.
+
+**18. Why can collection fetch joins cause pagination problems?**
+
+A collection fetch join multiplies SQL result rows.
+
+For example, one department with ten employees produces multiple joined rows.
+
+This can cause:
+
+- Duplicate parent records.
+- Incorrect pagination.
+- In-memory pagination.
+- High database resource usage.
+
+Solutions:
+
+1. Fetch parent IDs using pagination.
+2. Fetch collections separately.
+3. Use DTO projections.
+4. Use batch fetching.
+5. Inspect generated SQL.
+
+## **E. Spring Security**
+
+**19. CSRF vs CORS**
+
+| CSRF                                                         | CORS                                                   |
+| ------------------------------------------------------------ | ------------------------------------------------------ |
+| Cross-Site Request Forgery                                   | Cross-Origin Resource Sharing                          |
+| Security attack                                              | Browser access-control mechanism                       |
+| Tricks a browser into making unwanted authenticated requests | Controls which origins can access responses            |
+| Protected using CSRF tokens and cookie strategies            | Configured using allowed origins, methods, and headers |
+
+CORS does not replace CSRF protection.
+
+**20. Why hash passwords instead of encrypting them?**
+
+Encryption is reversible, whereas password hashing is designed for verification without recovering the original password.
+
+Use:
+
+- Argon2id.
+- bcrypt.
+- scrypt.
+
+These are adaptive password hashing algorithms.
+
+Avoid storing plaintext passwords or using ordinary SHA-256 alone for password storage.
+
+**21. How does Spring Security handle multiple SecurityFilterChain beans?**
+
+Each chain has a request matcher.
+
+```
+@Bean
+@Order(1)
+SecurityFilterChain apiChain(
+        HttpSecurity http) throws Exception {
+
+    http.securityMatcher("/api/**");
+
+    return http.build();
+}
+```
+
+Spring Security checks chains in order and uses the first matching chain.
+
+A separate chain can handle other application routes.
+
+**22. How does JWT validation work?**
+
+JWT validation includes:
+
+1. Signature verification.
+2. Allowed signing algorithm validation.
+3. Issuer validation.
+4. Audience validation.
+5. Expiration validation.
+6. Not-before validation.
+7. Authority and scope validation.
+
+For key rotation, use trusted public keys published through JWKS.
+
+The `kid` claim header helps identify the signing key.
+
+Never trust arbitrary token-supplied key URLs.
+
+## **F. Microservices**
+
+**23. Explain transactional outbox pattern.**
+
+It solves the problem of updating a database and publishing a message reliably.
+
+Steps:
+
+1. Create an order.
+2. Insert an event into an outbox table.
+3. Commit both in one database transaction.
+4. A publisher reads pending events.
+5. Publish to Kafka or another broker.
+6. Mark the event as processed.
+
+This prevents losing the intent to publish an event when the application crashes after committing the business transaction.
+
+**24. What is at-least-once delivery? How do you avoid duplicate processing?**
+
+At-least-once delivery means a message can be delivered multiple times.
+
+A consumer can process a message but fail before acknowledging it. The broker may then redeliver it.
+
+Solution: idempotent consumer.
+
+Maintain a processed-message table:
+
+```
+processed_messages
+------------------
+message_id
+processed_at
+```
+
+Use a unique constraint on `message_id` and perform the message record and business update in one database transaction.
+
+**25. Explain distributed tracing.**
+
+Distributed tracing tracks requests across multiple services.
+
+- Trace ID: Overall request identifier.
+- Span ID: Individual operation identifier.
+- Parent span ID: Relationship between operations.
+
+Example:
+
+```
+API Gateway
+    |
+Order Service
+    |
+Payment Service
+    |
+Database
+```
+
+All operations can belong to the same trace.
+
+Use W3C Trace Context and correlate traces with logs and metrics.
+
+**26. How do you evolve Kafka event schemas without breaking consumers?**
+
+Use backward-compatible schema evolution.
+
+Best practices:
+
+- Add optional fields.
+- Provide sensible defaults.
+- Avoid removing existing fields immediately.
+- Avoid changing field meanings.
+- Validate schema compatibility.
+- Use schema registries where appropriate.
+- Deploy consumers and producers in a controlled order.
+
+Use an expand-and-contract migration strategy.
+
+## **G. RESTful services**
+
+**27.&#x20;**`Accept`**&#x20;vs&#x20;**`Content-Type`
+
+`Content-Type` specifies the format of the request or response body.
+
+`Accept` specifies the response format the client wants.
+
+Example:
+
+```
+POST /employees
+Content-Type: application/json
+Accept: application/json
+```
+
+The client sends JSON and expects JSON in response.
+
+**28. How do you implement consistent REST API error handling?**
+
+Use `@RestControllerAdvice` and `@ExceptionHandler`.
+
+```
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(
+        EmployeeNotFoundException.class
+    )
+    public ResponseEntity<String> handleNotFound(
+        EmployeeNotFoundException ex) {
+
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(ex.getMessage());
+    }
+}
+```
+
+For production APIs, a structured Problem Details response following RFC 9457 is preferable.
+
+Never expose stack traces or internal database details.
+
+**29. How do you implement rate limiting?**
+
+Rate limiting restricts the number of requests a client can make.
+
+Token bucket algorithm:
+
+1. Maintain a bucket with a maximum token capacity.
+2. Refill tokens at a configured rate.
+3. Consume one token for each request.
+4. Reject requests when no token is available.
+
+Return HTTP `429 Too Many Requests` when the limit is exceeded.
+
+Use shared storage or a distributed rate limiter when running multiple instances.
+
+**30. How do you stream a large file from a REST API?**
+
+Avoid loading the entire file into memory.
+
+Use `StreamingResponseBody`:
+
+```
+@GetMapping("/download")
+public StreamingResponseBody download() {
+
+    return outputStream -> {
+
+        try (InputStream input =
+            storageService.openStream()) {
+
+            input.transferTo(outputStream);
+        }
+    };
+}
+```
+
+Consider:
+
+- Content-Type.
+- Content-Disposition.
+- Authentication.
+- Timeouts.
+- Resource cleanup.
+- Range requests.
+- Connection limits.
+
+# **Part 2 – SQL answer key (10)**
+
+Assume these tables:
+
+- `employees(id, name, salary, department_id, email, created_at)`
+- `departments(id, name)`
+- `orders(order_id, customer_id, order_date)`
+- `sales(id, customer_id, transaction_date, amount)`
+
+**SQL 1. Top three distinct salaries per department**
+
+```
+SELECT *
+FROM (
+    SELECT e.*,
+           DENSE_RANK() OVER (
+               PARTITION BY department_id
+               ORDER BY salary DESC
+           ) AS rnk
+    FROM employees e
+) t
+WHERE rnk <= 3;
+```
+
+Why `DENSE_RANK()`? It gives the same rank to tied salaries without skipping the next rank.
+
+**SQL 2. Delete duplicate emails, keeping the earliest record**
+
+```
+WITH ranked AS (
+    SELECT id,
+           ROW_NUMBER() OVER (
+               PARTITION BY email
+               ORDER BY created_at, id
+           ) AS rn
+    FROM employees
+)
+DELETE FROM employees e
+USING ranked r
+WHERE e.id = r.id
+AND r.rn > 1;
+```
+
+**SQL 3. Find employees without a department**
+
+```
+SELECT e.*
+FROM employees e
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM departments d
+    WHERE d.id = e.department_id
+);
+```
+
+`NOT EXISTS` is an anti-join pattern.
+
+**SQL 4. Calculate running sales totals**
+
+```
+SELECT customer_id,
+       transaction_date,
+       amount,
+       SUM(amount) OVER (
+           PARTITION BY customer_id
+           ORDER BY transaction_date, id
+           ROWS BETWEEN UNBOUNDED PRECEDING
+                    AND CURRENT ROW
+       ) AS running_total
+FROM sales;
+```
+
+**SQL 5. Find first and latest orders per customer**
+
+```
+WITH ranked AS (
+    SELECT *,
+           ROW_NUMBER() OVER (
+               PARTITION BY customer_id
+               ORDER BY order_date, order_id
+           ) AS first_rank,
+           ROW_NUMBER() OVER (
+               PARTITION BY customer_id
+               ORDER BY order_date DESC, order_id DESC
+           ) AS last_rank
+    FROM orders
+)
+SELECT customer_id,
+       MAX(order_id) FILTER (
+           WHERE first_rank = 1
+       ) AS first_order,
+       MAX(order_id) FILTER (
+           WHERE last_rank = 1
+       ) AS latest_order
+FROM ranked
+GROUP BY customer_id;
+```
+
+**SQL 6. How to troubleshoot a slow query**
+
+```
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT *
+FROM orders
+WHERE customer_id = 101;
+```
+
+Check:
+
+- Sequential scans.
+- Index scans.
+- Join algorithms.
+- Estimated versus actual rows.
+- Sort operations.
+- Buffer reads.
+- Missing indexes.
+- Outdated statistics.
+
+**SQL 7. Partial index and covering index**
+
+Partial index:
+
+```
+CREATE INDEX idx_active_orders
+ON orders(customer_id)
+WHERE status = 'ACTIVE';
+```
+
+Covering index:
+
+```
+CREATE INDEX idx_orders_customer
+ON orders(customer_id)
+INCLUDE (order_date, status);
+```
+
+Partial indexes cover only qualifying rows. Covering indexes can contain additional columns needed by a query.
+
+**SQL 8. How to prevent database deadlocks**
+
+- Acquire locks in consistent order.
+- Keep transactions short.
+- Avoid unnecessary locking.
+- Avoid network calls inside transactions.
+- Analyse deadlock logs.
+- Use safe retries in new transactions.
+
+**SQL 9. JSONB querying and indexing**
+
+```
+SELECT *
+FROM customer_profiles
+WHERE profile ->> 'city' = 'Hyderabad';
+```
+
+GIN index:
+
+```
+CREATE INDEX idx_profile_gin
+ON customer_profiles
+USING GIN(profile);
+```
+
+Expression index:
+
+```
+CREATE INDEX idx_profile_city
+ON customer_profiles((profile ->> 'city'));
+```
+
+**SQL 10. ROLLUP and GROUPING SETS**
+
+ROLLUP:
+
+```
+SELECT department_id,
+       job_title,
+       SUM(salary)
+FROM employees
+GROUP BY ROLLUP(department_id, job_title);
+```
+
+GROUPING SETS:
+
+```
+SELECT department_id,
+       job_title,
+       SUM(salary)
+FROM employees
+GROUP BY GROUPING SETS (
+    (department_id),
+    (job_title),
+    ()
+);
+```
+
+These generate subtotals and grand totals for reporting.
+
+# **Part 3 – Coding answer key (5)**
+
+The complete Java implementations are in the previous message. Here is the quick revision sheet.
+
+| No. | Problem                  | Main technique           | Time complexity |
+| --- | ------------------------ | ------------------------ | --------------- |
+| 1   | Group anagrams           | HashMap + sorting        | O(n × k log k)  |
+| 2   | Top K frequent elements  | HashMap + Min Heap       | O(n + u log k)  |
+| 3   | Merge intervals          | Sorting + greedy         | O(n log n)      |
+| 4   | Binary tree level order  | BFS + Queue              | O(n)            |
+| 5   | Minimum window substring | Sliding window + HashMap | O(n + m)        |
+
+**Expected outputs**
+
+```
+1. Group anagrams:
+[["eat", "tea", "ate"], ["tan", "nat"], ["bat"]]
+
+2. Top K frequent:
+[4, 1]
+
+3. Merge intervals:
+[[1, 6], [8, 12]]
+
+4. Level order:
+[[1], [2, 3], [4, 5, 6]]
+
+5. Minimum window:
+BANC
+```
+
+# **Part 4 – Final interview revision priorities**
+
+For a Java backend developer with your project background, I recommend mastering these areas:
+
+1. Java collections, generics, immutability, and concurrency.
+2. Spring bean lifecycle, dependency injection, proxies, and transactions.
+3. Spring Boot configuration, monitoring, and graceful shutdown.
+4. Hibernate persistence context, dirty checking, batching, and locking.
+5. Spring Security JWT validation and authorisation.
+6. Kafka reliability, idempotency, and transactional outbox.
+7. REST error handling, streaming, and rate limiting.
+8. SQL window functions, indexing, query plans, and deadlocks.
+9. Coding with HashMap, PriorityQueue, BFS, sorting, and sliding windows.
+
+**My recommendation:** Don't just memorise the answers. Be able to explain the reason, give a small Java example, and describe where you would use the concept in a real production project.
+
+We can now use this entire answer key for a fresh interactive mock interview, with one question at a time and scoring out of 10.
