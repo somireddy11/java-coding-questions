@@ -4839,3 +4839,25 @@ For a Java backend developer with your project background, I recommend mastering
 **My recommendation:** Don't just memorise the answers. Be able to explain the reason, give a small Java example, and describe where you would use the concept in a real production project.
 
 We can now use this entire answer key for a fresh interactive mock interview, with one question at a time and scoring out of 10.
+
+
+## How to count each element/word from the String ArrayList in Java8
+
+```java
+
+package coding;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+public class TestNotes {
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("AA", "BB", "AA", "CC");
+        Map<String, Long> map = names.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        map.forEach((k,v)->{System.out.println(k+"-"+v);});
+    }
+}
+```
