@@ -4861,3 +4861,28 @@ public class TestNotes {
     }
 }
 ```
+
+
+
+
+```java
+package coding;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class SalarySum {
+    public static void main(String[] args) {
+
+        List<Employee> list = Arrays.asList(
+                new Employee("John", 50000),
+                new Employee("David", 60000),
+                new Employee("Smith", 70000)
+        );
+
+        Double allSalaries = list.stream().map(Employee::getSalary).reduce(0.0, Double::sum);
+        System.out.println(allSalaries);
+
+    }
+}
+```
