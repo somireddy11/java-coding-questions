@@ -4886,3 +4886,25 @@ public class SalarySum {
     }
 }
 ```
+
+ ## Sort HashMap by keys
+
+ ```java
+import java.util.*;
+
+public class SortHashMap {
+    public static void main(String[] args) {
+
+        Map<Integer, String> map = new HashMap<>();
+
+        map.put(3, "Apple");
+        map.put(1, "Mango");
+        map.put(2, "Banana");
+        map.put(4, "Orange");
+
+        Map<Integer, String> sortedMap = new TreeMap<>(map);
+
+        System.out.println(sortedMap);
+    }
+}
+```
